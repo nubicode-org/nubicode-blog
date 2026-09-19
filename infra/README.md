@@ -6,6 +6,8 @@ Private S3 bucket + CloudFront (OAC) + existing ACM cert + GitHub OIDC deploy ro
 
 ## Apply (one time, ~5 min)
 
+Shortcut: `./infra/deploy-blog.sh [--merge]` runs everything below (cert + OIDC + zone lookup, `terraform apply`, GitHub secrets, push, optional squash-merge).
+
 ```bash
 cd infra
 export AWS_PROFILE=personal
