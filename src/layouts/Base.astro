@@ -1,0 +1,101 @@
+---
+const {
+  title,
+  description,
+  canonical = Astro.url.href,
+  image = "https://blog.nubicode.com/og-default.png",
+  type = "website",
+  jsonld = [],
+} = Astro.props;
+const org = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.nubicode.com/#organization",
+  name: "NubiCode",
+  url: "https://www.nubicode.com/",
+  logo: "https://www.nubicode.com/logos/apple-touch-icon.png",
+  description: "Nearshore cloud-native and AI infrastructure engineering. AWS Partner, Vanta Partner. Baltimore, MD and San Salvador, El Salvador.",
+  sameAs: [
+    "https://www.linkedin.com/company/NubiCode-org/",
+    "https://github.com/nubicode-org",
+    "https://x.com/nubicode",
+    "https://www.instagram.com/nubicode",
+    "https://www.facebook.com/nubicode",
+  ],
+  areaServed: "US",
+  address: [
+    { "@type": "PostalAddress", addressLocality: "Baltimore", addressRegion: "MD", addressCountry: "US" },
+    { "@type": "PostalAddress", addressLocality: "San Salvador", addressCountry: "SV" },
+  ],
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="NubiCode Blog" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@nubicode" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="alternate" type="application/rss+xml" title="NubiCode Blog" href="/rss.xml" />
+    <meta name="theme-color" content="#4768F2" />
+    <script type="application/ld+json" set:html={JSON.stringify(org)} />
+    {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    <style is:global>
+      :root { --blue: #4768F2; --bg: #0b0e1a; --fg: #eef0fa; --muted: #9aa3c4; --card: #141a2e; --border: #262d4a; }
+      @media (prefers-color-scheme: light) { :root { --bg: #ffffff; --fg: #0f1222; --muted: #5b6382; --card: #f4f6fc; --border: #e1e5f2; } }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+      a { color: var(--blue); }
+      header, footer, main { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 22px 20px; }
+      header .brand { font-weight: 800; text-decoration: none; color: var(--fg); font-size: 1.15rem; }
+      header nav a { margin-left: 18px; color: var(--muted); text-decoration: none; font-size: .95rem; }
+      main { padding-bottom: 60px; }
+      h1 { font-size: 2.1rem; line-height: 1.2; letter-spacing: -.01em; margin: .4em 0; }
+      h2 { margin-top: 2em; font-size: 1.45rem; }
+      .meta { color: var(--muted); font-size: .92rem; }
+      .tldr { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--blue); padding: 14px 18px; border-radius: 8px; margin: 24px 0; }
+      pre { background: #0d1117 !important; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-size: .88rem; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      :not(pre) > code { background: var(--card); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
+      table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: .95rem; }
+      th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+      th { background: var(--card); }
+      .card { display: block; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin: 14px 0; text-decoration: none; color: inherit; }
+      .card h3 { margin: 0 0 6px; }
+      .cta { background: var(--blue); color: #fff; padding: 18px 20px; border-radius: 10px; margin-top: 40px; }
+      .cta a { color: #fff; font-weight: 700; }
+      footer { border-top: 1px solid var(--border); padding: 24px 20px 48px; color: var(--muted); font-size: .9rem; }
+      img { max-width: 100%; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">NubiCode <span style="color:var(--blue)">Blog</span></a>
+      <nav>
+        <a href="/">Posts</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="https://www.nubicode.com/?utm_source=blog&utm_medium=nav">nubicode.com</a>
+      </nav>
+    </header>
+    <main><slot /></main>
+    <footer>
+      NubiCode — nearshore cloud-native & AI infrastructure engineering. Baltimore, MD · San Salvador, El Salvador. AWS Partner · Vanta Partner.
+      <br /><a href="https://www.linkedin.com/company/NubiCode-org/">LinkedIn</a> · <a href="https://github.com/nubicode-org">GitHub</a> · <a href="https://x.com/nubicode">X</a> · <a href="/llms.txt">llms.txt</a>
+    </footer>
+  </body>
+</html>
