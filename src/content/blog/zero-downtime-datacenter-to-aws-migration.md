@@ -3,7 +3,6 @@ title: "Zero-downtime datacenter to AWS: golden AMIs, DMS, Direct Connect"
 description: "How we moved a recruitment platform’s ~40-instance .NET fleet and databases from an Ireland datacenter to multi-account AWS with a zero-downtime cutover."
 pubDate: 2026-11-04
 tags: [aws, migration, packer, dms, direct-connect, eks]
-image: /images/dc-to-aws.png
 proof: [PP-04, PP-02]
 tldr: "Golden AMIs made the fleet disposable, Direct Connect + DMS kept the databases in sync, and a weighted DNS cutover meant the last user never noticed. Decompose the monolith after the move, not during."
 ---

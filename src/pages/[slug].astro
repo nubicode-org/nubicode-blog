@@ -9,7 +9,7 @@ const { post } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const url = `https://blog.nubicode.com/${post.id}`;
 const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : "https://blog.nubicode.com/og-default.png";
+const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : "https://www.nubicode.com/logos/og-image.png";
 const jsonld = [
   {
     "@context": "https://schema.org",

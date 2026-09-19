@@ -31,4 +31,8 @@ Every post automatically gets: canonical URL, OpenGraph/Twitter tags, `TechArtic
 
 ## Infra (one-time)
 
-S3 bucket `nubicode-blog` (private, OAC) + CloudFront with ACM cert for `blog.nubicode.com` + Route 53 / registrar CNAME. Secrets: `AWS_ROLE_ARN` (OIDC role with `s3:*` on the bucket and `cloudfront:CreateInvalidation`), `CLOUDFRONT_DISTRIBUTION_ID`.
+Terraform in [`infra/`](./infra/README.md): private S3 bucket + CloudFront (OAC, PriceClass_100) + the existing ACM cert + a GitHub OIDC deploy role. `AWS_PROFILE=personal`, `us-east-1`, ≈ $0.10/month. Outputs give the two repo secrets (`AWS_ROLE_ARN`, `CLOUDFRONT_DISTRIBUTION_ID`) and the CNAME target for `blog.nubicode.com`.
+
+## Design
+
+Tokens in `src/layouts/Base.astro` mirror `nubicode-webpage/index.html` (`Inter`, accent `#4768F2`, glass surfaces). Change them there first, then here. OG image defaults to `https://www.nubicode.com/logos/og-image.png`; per-post images go in `public/images/` and are set with `image:` in frontmatter — exported by design, never generated.

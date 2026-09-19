@@ -3,7 +3,7 @@ const {
   title,
   description,
   canonical = Astro.url.href,
-  image = "https://blog.nubicode.com/og-default.png",
+  image = "https://www.nubicode.com/logos/og-image.png",
   type = "website",
   jsonld = [],
 } = Astro.props;
@@ -49,43 +49,53 @@ const org = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="icon" href="/favicon.png" />
     <link rel="alternate" type="application/rss+xml" title="NubiCode Blog" href="/rss.xml" />
     <meta name="theme-color" content="#4768F2" />
     <script type="application/ld+json" set:html={JSON.stringify(org)} />
     {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
     <style is:global>
-      :root { --blue: #4768F2; --bg: #0b0e1a; --fg: #eef0fa; --muted: #9aa3c4; --card: #141a2e; --border: #262d4a; }
-      @media (prefers-color-scheme: light) { :root { --bg: #ffffff; --fg: #0f1222; --muted: #5b6382; --card: #f4f6fc; --border: #e1e5f2; } }
+      /* Design tokens mirror nubicode-webpage/index.html :root — keep in sync */
+      :root { --accent: #4768F2; --accent-light: rgba(71,104,242,.12); --accent-glow: rgba(71,104,242,.25);
+        --bg: #f7f8fc; --fg: #0f1222; --muted: #5b6382; --border: rgba(71,104,242,.14);
+        --glass-bg: rgba(255,255,255,.55); --glass-border: rgba(255,255,255,.6);
+        --glass-shadow: 0 8px 32px rgba(71,104,242,.08), 0 2px 8px rgba(0,0,0,.04); }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
-      a { color: var(--blue); }
+      body { margin: 0; color: var(--fg); font: 17px/1.65 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg) radial-gradient(900px 500px at 10% -10%, var(--accent-light), transparent 60%) no-repeat; }
+      a { color: var(--accent); }
       header, footer, main { max-width: 760px; margin: 0 auto; padding: 0 20px; }
       header { display: flex; justify-content: space-between; align-items: center; padding: 22px 20px; }
-      header .brand { font-weight: 800; text-decoration: none; color: var(--fg); font-size: 1.15rem; }
-      header nav a { margin-left: 18px; color: var(--muted); text-decoration: none; font-size: .95rem; }
+      header .brand { font-weight: 800; text-decoration: none; color: var(--fg); font-size: 1.15rem; letter-spacing: -.01em; }
+      header nav a { margin-left: 18px; color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 600; }
+      header nav a:hover { color: var(--accent); }
       main { padding-bottom: 60px; }
-      h1 { font-size: 2.1rem; line-height: 1.2; letter-spacing: -.01em; margin: .4em 0; }
-      h2 { margin-top: 2em; font-size: 1.45rem; }
+      h1 { font-size: 2.1rem; line-height: 1.2; letter-spacing: -.02em; font-weight: 800; margin: .4em 0; }
+      h2 { margin-top: 2em; font-size: 1.45rem; font-weight: 700; letter-spacing: -.01em; }
       .meta { color: var(--muted); font-size: .92rem; }
-      .tldr { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--blue); padding: 14px 18px; border-radius: 8px; margin: 24px 0; }
-      pre { background: #0d1117 !important; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-size: .88rem; }
+      .tldr { background: var(--glass-bg); border: 1px solid var(--glass-border); border-left: 4px solid var(--accent); box-shadow: var(--glass-shadow); backdrop-filter: blur(24px); padding: 14px 18px; border-radius: 12px; margin: 24px 0; }
+      pre { background: #0f1222 !important; border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: .88rem; }
       code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-      :not(pre) > code { background: var(--card); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
+      :not(pre) > code { background: var(--accent-light); color: var(--fg); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
       table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: .95rem; }
-      th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
-      th { background: var(--card); }
-      .card { display: block; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin: 14px 0; text-decoration: none; color: inherit; }
-      .card h3 { margin: 0 0 6px; }
-      .cta { background: var(--blue); color: #fff; padding: 18px 20px; border-radius: 10px; margin-top: 40px; }
+      th, td { border-bottom: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+      th { color: var(--muted); font-weight: 600; font-size: .85rem; }
+      .card { display: block; background: var(--glass-bg); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); backdrop-filter: blur(24px); border-radius: 16px; padding: 18px 20px; margin: 14px 0; text-decoration: none; color: inherit; transition: transform .3s cubic-bezier(.32,.72,0,1), box-shadow .3s; }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 16px 48px var(--accent-glow); }
+      .card h3 { margin: 0 0 6px; font-weight: 700; letter-spacing: -.01em; }
+      .cta { background: var(--accent); color: #fff; padding: 18px 20px; border-radius: 16px; margin-top: 40px; box-shadow: 0 8px 32px var(--accent-glow); }
       .cta a { color: #fff; font-weight: 700; }
       footer { border-top: 1px solid var(--border); padding: 24px 20px 48px; color: var(--muted); font-size: .9rem; }
-      img { max-width: 100%; border-radius: 8px; }
+      img { max-width: 100%; border-radius: 12px; }
+      @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
     </style>
   </head>
   <body>
     <header>
-      <a class="brand" href="/">NubiCode <span style="color:var(--blue)">Blog</span></a>
+      <a class="brand" href="/">NubiCode <span style="color:var(--accent)">Blog</span></a>
       <nav>
         <a href="/">Posts</a>
         <a href="/rss.xml">RSS</a>
