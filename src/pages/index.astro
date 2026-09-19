@@ -13,13 +13,16 @@ const jsonld = [{
 }];
 ---
 <Base title="NubiCode Blog — cloud-native, Kubernetes & AI infrastructure notes" description="Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode's nearshore team in El Salvador and Baltimore." canonical="https://blog.nubicode.com/" jsonld={jsonld}>
-  <h1>Nearshore Platform Notes</h1>
-  <p class="meta">How we build and run cloud-native platforms and AI infrastructure for US teams. Real numbers, real configs, anonymized clients.</p>
-  {posts.map((p) => (
-    <a class="card" href={`/${p.id}`}>
-      <h3>{p.data.title}</h3>
-      <div class="meta">{fmt(p.data.pubDate)} · {p.data.author} · {p.data.tags.join(", ")}</div>
-      <p style="margin:8px 0 0">{p.data.description}</p>
-    </a>
-  ))}
+  <h1 class="section-title">Nearshore Platform Notes</h1>
+  <p class="section-subtitle">How we build and run cloud-native platforms and AI infrastructure for US teams. Real numbers, real configs, anonymized clients.</p>
+  <div class="post-list">
+    {posts.map((p) => (
+      <a class="card glass" href={`/${p.id}`}>
+        <h3>{p.data.title}</h3>
+        <div class="meta">{fmt(p.data.pubDate)} · {p.data.author}</div>
+        <p>{p.data.description}</p>
+        <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+      </a>
+    ))}
+  </div>
 </Base>

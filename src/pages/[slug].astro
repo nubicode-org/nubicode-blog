@@ -40,13 +40,14 @@ const jsonld = [
   <article>
     <h1>{post.data.title}</h1>
     <p class="meta">
-      <a href={post.data.authorUrl} rel="author">{post.data.author}</a> · {fmt(post.data.pubDate)}{post.data.updatedDate && ` · updated ${fmt(post.data.updatedDate)}`} · {post.data.tags.join(", ")}
+      <a href={post.data.authorUrl} rel="author">{post.data.author}</a> · {fmt(post.data.pubDate)}{post.data.updatedDate && ` · updated ${fmt(post.data.updatedDate)}`}
     </p>
-    <div class="tldr"><strong>TL;DR</strong> — {post.data.tldr}</div>
+    <div class="tags">{post.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+    <div class="tldr glass"><strong>TL;DR</strong>{post.data.tldr}</div>
     <Content />
-    <div class="cta">
-      We do this for US teams. Senior nearshore engineers, US hours, AWS Partner, Vanta Partner.
-      <a href={`https://www.nubicode.com/?utm_source=blog&utm_medium=post&utm_campaign=${post.id}`}>Book a 30-minute architecture review →</a>
+    <div class="cta glass">
+      <p><strong>We do this for US teams.</strong>Senior nearshore engineers, US hours, AWS Partner, Vanta Partner.</p>
+      <a class="btn-primary" href={`https://www.nubicode.com/?utm_source=blog&utm_medium=post&utm_campaign=${post.id}#contact`}>Book a 30-minute architecture review</a>
     </div>
   </article>
 </Base>
