@@ -1,0 +1,196 @@
+---
+const {
+  title,
+  description,
+  canonical = Astro.url.href,
+  image = "https://www.nubicode.com/logos/og-image.png",
+  type = "website",
+  jsonld = [],
+} = Astro.props;
+const org = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.nubicode.com/#organization",
+  name: "NubiCode",
+  url: "https://www.nubicode.com/",
+  logo: "https://www.nubicode.com/logos/apple-touch-icon.png",
+  description: "Nearshore cloud-native and AI infrastructure engineering. AWS Partner, Vanta Partner. Baltimore, MD and San Salvador, El Salvador.",
+  sameAs: [
+    "https://www.linkedin.com/company/NubiCode-org/",
+    "https://github.com/nubicode-org",
+    "https://x.com/nubicode",
+    "https://www.instagram.com/nubicode",
+    "https://www.facebook.com/nubicode",
+  ],
+  areaServed: "US",
+  address: [
+    { "@type": "PostalAddress", addressLocality: "Baltimore", addressRegion: "MD", addressCountry: "US" },
+    { "@type": "PostalAddress", addressLocality: "San Salvador", addressCountry: "SV" },
+  ],
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="NubiCode Blog" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@nubicode" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/logos/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logos/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logos/apple-touch-icon.png" />
+    <link rel="alternate" type="application/rss+xml" title="NubiCode Blog" href="/rss.xml" />
+    <meta name="theme-color" content="#4768F2" />
+    <script type="application/ld+json" set:html={JSON.stringify(org)} />
+    {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    <style is:global>
+      /* Tokens: see DESIGN.md — mirrors nubicode-webpage/index.html :root. Light-only by brand decision. */
+      :root {
+        --bg: #F0F2F7; --ink: #1A1A2E; --ink-2: #3A3A5E; --ink-3: #9CA3AF;
+        --accent: #4768F2; --accent-2: #6B8EFF; --accent-light: rgba(71,104,242,.12); --accent-glow: rgba(71,104,242,.25);
+        --surface-2: #E8ECF8; --line: #D5D9E8;
+        --glass-bg: rgba(255,255,255,.45); --glass-bg-hover: rgba(255,255,255,.6);
+        --glass-border: rgba(255,255,255,.5); --glass-border-hover: rgba(255,255,255,.8);
+        --glass-blur: 24px; --glass-blur-heavy: 40px;
+        --glass-shadow: 0 8px 32px rgba(71,104,242,.08), 0 2px 8px rgba(0,0,0,.04);
+        --glass-shadow-hover: 0 16px 48px rgba(71,104,242,.15), 0 4px 16px rgba(0,0,0,.06);
+        --glass-inset: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -1px 0 rgba(255,255,255,.1);
+        --morph-timing: cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      * { box-sizing: border-box; }
+      html { color-scheme: light; }
+      body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1rem; line-height: 1.6; overflow-x: hidden; }
+      body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+        background: radial-gradient(800px 500px at 15% -5%, rgba(71,104,242,.14), transparent 60%), radial-gradient(700px 500px at 95% 10%, rgba(107,142,255,.12), transparent 60%); }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .glass { background: var(--glass-bg); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow), var(--glass-inset); backdrop-filter: blur(var(--glass-blur)) saturate(180%); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%); }
+
+      /* nav */
+      .navbar { position: sticky; top: 0; z-index: 100; padding: .9rem 2rem; background: var(--glass-bg); border-bottom: 1px solid var(--glass-border); box-shadow: var(--glass-shadow), var(--glass-inset); backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%); -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(180%); }
+      .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+      .nav-logo img { height: 40px; width: auto; display: block; transition: transform .3s var(--morph-timing); }
+      .nav-logo:hover img { transform: scale(1.05); }
+      .nav-menu { display: flex; gap: 1.75rem; align-items: center; }
+      .nav-link { color: var(--ink-2); font-weight: 600; font-size: .95rem; }
+      .nav-link:hover { color: var(--accent); text-decoration: none; }
+      .nav-cta { background: var(--glass-bg-hover); color: var(--accent); border: 1px solid var(--glass-border); border-radius: 50px; padding: .6rem 1.4rem; font-weight: 600; box-shadow: var(--glass-shadow), var(--glass-inset); transition: all .3s var(--morph-timing); }
+      .nav-cta:hover { transform: translateY(-3px) scale(1.02); background: rgba(71,104,242,.15); box-shadow: var(--glass-shadow-hover), var(--glass-inset); text-decoration: none; }
+      @media (max-width: 640px) { .nav-menu { gap: 1rem; } .nav-link.hide-sm { display: none; } .navbar { padding: .75rem 1.25rem; } }
+
+      /* layout */
+      main { max-width: 800px; margin: 0 auto; padding: 4rem 1.25rem 5rem; }
+      .section-title { font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 1rem; color: var(--ink); }
+      .section-subtitle { font-size: clamp(1.0625rem, 2vw, 1.25rem); color: var(--ink-2); line-height: 1.6; margin: 0 0 2.5rem; max-width: 800px; }
+      article h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.02em; margin: .3em 0 .5em; }
+      article h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.01em; margin: 2.2em 0 .6em; }
+      article h3 { font-size: 1.15rem; font-weight: 700; margin: 1.8em 0 .5em; }
+      article p, article li { font-size: 1.0625rem; line-height: 1.7; color: var(--ink); }
+      article p { margin: 0 0 1.1em; }
+      .meta { color: var(--ink-2); font-size: .9rem; }
+      .meta a { font-weight: 600; }
+      .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+      .tag { font-size: .8rem; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 50px; padding: .2rem .75rem; }
+      .tldr { border-radius: 20px; padding: 1.1rem 1.4rem; margin: 1.75rem 0 2rem; position: relative; overflow: hidden; }
+      .tldr::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, var(--accent), var(--accent-2)); }
+      .tldr strong { color: var(--accent); font-weight: 800; letter-spacing: .08em; font-size: .8rem; text-transform: uppercase; display: block; margin-bottom: .3rem; }
+
+      /* code & tables */
+      pre { background: #1A1A2E !important; color: #F0F2F7; border-radius: 16px; padding: 1rem 1.2rem; overflow-x: auto; font-size: .875rem; line-height: 1.55; margin: 1.2em 0; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      :not(pre) > code { background: var(--accent-light); color: var(--ink); padding: .1em .45em; border-radius: 6px; font-size: .9em; }
+      table { border-collapse: collapse; width: 100%; font-size: .95rem; background: var(--glass-bg); border-radius: 16px; overflow: hidden; }
+      th, td { border-bottom: 1px solid var(--line); padding: .6rem .8rem; text-align: left; vertical-align: top; }
+      th { background: var(--surface-2); color: var(--ink-2); font-weight: 700; font-size: .85rem; letter-spacing: .02em; }
+      article table { display: block; overflow-x: auto; margin: 1.2em 0; }
+
+      /* post list */
+      .post-list { display: grid; gap: 1.25rem; }
+      .card { display: block; border-radius: 24px; padding: 1.5rem 1.75rem; color: inherit; position: relative; overflow: hidden; transition: transform .4s var(--morph-timing), box-shadow .4s var(--morph-timing), background .4s; }
+      .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,.1) 100%); }
+      .card:hover { transform: translateY(-5px); background: var(--glass-bg-hover); box-shadow: var(--glass-shadow-hover), var(--glass-inset); text-decoration: none; }
+      .card h3 { margin: 0 0 .4rem; font-size: 1.35rem; font-weight: 800; letter-spacing: -.015em; line-height: 1.25; }
+      .card p { margin: .5rem 0 0; color: var(--ink-2); }
+
+      /* cta */
+      .cta { margin-top: 3rem; border-radius: 24px; padding: 1.75rem 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+      .cta p { margin: 0; color: var(--ink-2); max-width: 32rem; }
+      .cta strong { color: var(--ink); display: block; font-size: 1.15rem; font-weight: 800; margin-bottom: .25rem; }
+      .btn-primary { display: inline-block; background: var(--accent); color: #fff; border-radius: 50px; padding: .9rem 1.8rem; font-weight: 600; box-shadow: 0 8px 32px var(--accent-glow); transition: all .3s var(--morph-timing); white-space: nowrap; }
+      .btn-primary:hover { transform: translateY(-4px) scale(1.02); text-decoration: none; box-shadow: 0 16px 48px var(--accent-glow); }
+
+      /* footer */
+      .footer { background: rgba(240,242,247,.8); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-top: 1px solid var(--glass-border); padding: 3rem 2rem 2rem; }
+      .footer-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2.5rem; }
+      .footer img { height: 50px; width: auto; margin-bottom: 1rem; border-radius: 0; }
+      .footer p, .footer li { color: var(--ink-2); font-size: .95rem; line-height: 1.7; margin: 0; }
+      .footer h3 { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); margin: 0 0 .75rem; }
+      .footer ul { list-style: none; padding: 0; margin: 0; }
+      .footer a { color: var(--ink-2); } .footer a:hover { color: var(--accent); }
+      .footer-bottom { max-width: 1400px; margin: 2.5rem auto 0; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--ink-3); font-size: .85rem; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between; }
+      @media (max-width: 720px) { .footer-container { grid-template-columns: 1fr; gap: 1.75rem; } main { padding: 2.5rem 1.25rem 4rem; } }
+      img { max-width: 100%; border-radius: 16px; }
+      .nav-logo img { border-radius: 0; }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="https://www.nubicode.com/?utm_source=blog&utm_medium=nav" class="nav-logo" aria-label="NubiCode home">
+          <img src="/logos/NubiCode responsive-03.png" alt="NubiCode" width="150" height="40" />
+        </a>
+        <div class="nav-menu">
+          <a href="/" class="nav-link">Blog</a>
+          <a href="https://www.nubicode.com/#services" class="nav-link hide-sm">Services</a>
+          <a href="/rss.xml" class="nav-link hide-sm">RSS</a>
+          <a href="https://www.nubicode.com/?utm_source=blog&utm_medium=nav#contact" class="nav-cta">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <main><slot /></main>
+    <footer class="footer">
+      <div class="footer-container">
+        <div>
+          <img src="/logos/NubiCode responsive-03.png" alt="NubiCode" width="150" height="50" loading="lazy" />
+          <p>Nearshore cloud-native &amp; AI infrastructure engineering for US teams. AWS Partner · Vanta Partner.</p>
+          <p>Baltimore, Maryland · San Salvador, El Salvador</p>
+        </div>
+        <div>
+          <h3>Company</h3>
+          <ul>
+            <li><a href="https://www.nubicode.com/#services">Services</a></li>
+            <li><a href="https://www.nubicode.com/#gallery">Our Work</a></li>
+            <li><a href="https://www.nubicode.com/#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Follow</h3>
+          <ul>
+            <li><a href="https://www.linkedin.com/company/NubiCode-org/">LinkedIn</a></li>
+            <li><a href="https://github.com/nubicode-org">GitHub</a></li>
+            <li><a href="https://x.com/nubicode">X</a></li>
+            <li><a href="/llms.txt">llms.txt</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 NubiCode. All rights reserved.</span><span>info@nubicode.com</span></div>
+    </footer>
+  </body>
+</html>
