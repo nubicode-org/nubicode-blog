@@ -1,7 +1,7 @@
 ---
 title: "FinOps audit of 737 hosts: the script, the buckets, the savings"
 description: "How we inventoried 737 hosts across three clouds, sorted them into four buckets, and found the savings before buying a single Savings Plan."
-pubDate: 2026-10-07
+pubDate: 2026-08-19
 tags: [finops, aws, gcp, azure, kubernetes]
 proof: [PP-01]
 tldr: "Inventory by script, bucket by evidence (keep / rightsize / decommission / ask), price the buckets, commit last. The deliverable is a re-runnable job, not a PDF."
