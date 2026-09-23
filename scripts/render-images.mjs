@@ -123,6 +123,38 @@ function coverPage({ label, title, accent, sub }) {
 
 // ---------- per-post content ----------
 const posts = {
+  "opentelemetry-collector-azure-monitor-google-cloud": {
+    cover: { label: "Observability", title: "One OpenTelemetry Collector, two clouds: Azure Monitor + Google Cloud", accent: "Instrument once. Export to both.", sub: "blog.nubicode.com" },
+    diagram: [1200, 720, "One OpenTelemetry Collector, two clouds", "Instrument once with OTLP; one gateway fans out to both clouds",
+      [
+        group(60, 140, 340, 400, "Every node (DaemonSet)"),
+        node(85, 180, 137, 84, "app pod", ["OTel SDK", "OTLP :4317"]),
+        node(238, 180, 137, 84, "app pod", ["auto-instr.", "OTLP :4317"]),
+        node(85, 330, 290, 150, "OTel agent", ["kubeletstats · filelog", "k8sattributes", "resourcedetection (gcp, azure)", "no credentials, no cloud export"], "accent"),
+        arrow([[153, 264], [153, 330]]),
+        arrow([[306, 264], [306, 330]]),
+        node(460, 200, 300, 250, "", [], "accent"),
+        text(610, 228, "OTel gateway", { size: 17, weight: 700, fill: T.accent, anchor: "middle" }),
+        text(610, 246, "Deployment · 2+ replicas", { size: 13.5, anchor: "middle" }),
+        pill(478, 266, 264, 1, "memory_limiter", "refuse load, don't OOM"),
+        pill(478, 326, 264, 2, "filter/noise", "drop healthz + debug once"),
+        pill(478, 386, 264, 3, "batch", "same batches to both"),
+        arrow([[375, 405], [418, 405], [418, 325], [460, 325]]),
+        text(230, 575, "agents forward OTLP gRPC to the gateway", { size: 13, weight: 600, fill: T.ink2, anchor: "middle" }),
+        node(830, 170, 310, 100, "Azure Monitor", ["azuremonitor exporter · own queue", "conn. string: Key Vault → Secret"]),
+        node(830, 380, 310, 100, "Google Cloud", ["googlecloud exporter · own queue", "Workload Identity, no JSON key"]),
+        arrow([[760, 280], [795, 280], [795, 220], [830, 220]]),
+        arrow([[760, 380], [795, 380], [795, 430], [830, 430]]),
+        text(985, 318, "separate queues:", { size: 13, weight: 600, fill: T.ink, anchor: "middle" }),
+        text(985, 338, "a slow backend can't stall the other", { size: 13, fill: T.ink2, anchor: "middle" }),
+        node(460, 530, 300, 76, "Collector self-metrics", "send_failed · queue size · refused"),
+        arrow([[610, 450], [610, 530]], { color: T.ink3 }),
+        node(830, 530, 310, 76, "Alerts per exporter", "which cloud is struggling", "muted"),
+        arrow([[760, 568], [830, 568]], { color: T.ink3 }),
+      ].join("")],
+    alt: "Architecture diagram: on every Kubernetes node, application pods send OTLP to a node-local OpenTelemetry Collector agent (DaemonSet) that adds kubelet stats, container logs and Kubernetes and cloud metadata but holds no credentials. Agents forward over OTLP gRPC to a gateway Deployment that applies memory_limiter, filters health checks and debug logs once, batches, and fans out through two exporters with separate queues: azuremonitor to Application Insights, authenticated with a connection string from Key Vault, and googlecloud to Cloud Monitoring, Trace and Logging via Workload Identity. The Collector's own export-failure, queue and refusal metrics drive per-exporter alerts.",
+    caption: "Agents collect and enrich; the gateway filters once and fans out to both clouds through independent queues.",
+  },
   "mcp-gateway-kubernetes": {
     cover: { label: "AI infrastructure", title: "Running an MCP gateway on Kubernetes for AI agents", accent: "One front door. Every tool call authorized + audited.", sub: "blog.nubicode.com" },
     diagram: [1200, 720, "MCP gateway on Kubernetes", "Agents talk to one gateway; MCP servers are reachable only through it",
