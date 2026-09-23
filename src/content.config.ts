@@ -11,7 +11,8 @@ const blog = defineCollection({
     author: z.string().default("Francisco Herrera"),
     authorUrl: z.string().url().default("https://www.linkedin.com/in/franherrera3112"),
     tags: z.array(z.string()).default([]),
-    image: z.string().optional(),
+    image: z.string().optional(), // 1200×627 PNG under /public — og:image, LinkedIn preview, RSS enclosure
+    imageAlt: z.string().optional(),
     draft: z.boolean().default(false),
     proof: z.array(z.string()).default([]),
     tldr: z.string(),

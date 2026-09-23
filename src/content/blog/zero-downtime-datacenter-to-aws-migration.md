@@ -4,6 +4,8 @@ description: "How we moved a recruitment platform’s ~40-instance .NET fleet an
 pubDate: 2026-09-02
 tags: [aws, migration, packer, dms, direct-connect, eks]
 proof: [PP-04, PP-02]
+image: /images/zero-downtime-datacenter-to-aws-migration/cover.png
+imageAlt: "Zero-downtime datacenter to AWS: golden AMIs, DMS, Direct Connect — ~40 instances moved · 0 downtime"
 tldr: "Golden AMIs made the fleet disposable, Direct Connect + DMS kept the databases in sync, and a weighted DNS cutover meant the last user never noticed. Decompose the monolith after the move, not during."
 ---
 
@@ -12,6 +14,11 @@ tldr: "Golden AMIs made the fleet disposable, Direct Connect + DMS kept the data
 An online recruitment platform running a .NET monolith on roughly 40 hand-built Windows instances in a datacenter in Ireland, with SQL Server underneath and a growing analytics need. The goal: land on AWS in a multi-account structure, keep the site up throughout, and set up the monolith to be decomposed afterwards.
 
 The order we chose: **compute first, data second, cutover third, decompose fourth.** Every failed migration story we know reversed at least one of those.
+
+<figure class="diagram">
+  <img src="/images/zero-downtime-datacenter-to-aws-migration/diagram.png" alt="Migration architecture diagram: Route 53 weighted records with a 60-second TTL shift traffic from an Ireland datacenter (about 40 hand-built Windows .NET instances and SQL Server) to an AWS multi-account setup. Packer golden AMIs feed Auto Scaling Groups behind an ALB; AWS DMS replicates SQL Server over Direct Connect with full load plus CDC into RDS SQL Server, which feeds Amazon Redshift in the analytics account. Phases: compute, data, cutover, then decompose onto EKS." width="1200" height="780" loading="lazy" decoding="async" />
+  <figcaption>Weighted DNS moved users; DMS over Direct Connect kept the data in sync until the flip.</figcaption>
+</figure>
 
 ## 1. Multi-account foundation
 

@@ -3,6 +3,8 @@ title: "Running an MCP gateway on Kubernetes for AI agents"
 description: "One front door for AI agents: MCP servers behind a Kubernetes gateway with auth, per-tool authorization, session routing and a per-call audit log."
 pubDate: 2026-09-09
 tags: [mcp, ai-infrastructure, kubernetes, helm, security]
+image: /images/mcp-gateway-kubernetes/cover.png
+imageAlt: "Running an MCP gateway on Kubernetes for AI agents — One front door. Every tool call authorized + audited."
 tldr: "Don't let agents connect straight to every MCP server. Put one gateway in front: it aggregates the tool catalog, holds the downstream credentials, authorizes every tool call, and writes one audit line per call. On Kubernetes that's a Deployment + Ingress for the gateway, ClusterIP-only MCP servers, and NetworkPolicy so nothing else can reach them."
 ---
 
@@ -28,13 +30,10 @@ A gateway sits between clients and servers and does four jobs:
 
 ## The shape on Kubernetes
 
-```
-agents ──HTTPS──▶ Ingress ──▶ mcp-gateway (Deployment, 2+ replicas)
-                                  │
-                ┌─────────────────┼─────────────────┐
-                ▼                 ▼                 ▼
-          mcp-jira (Svc)   mcp-github (Svc)   mcp-postgres (Svc)
-```
+<figure class="diagram">
+  <img src="/images/mcp-gateway-kubernetes/diagram.png" alt="Architecture diagram: AI agents connect over HTTPS to a Kubernetes Ingress, then to an mcp-gateway Deployment that aggregates the tool catalog, authorizes every tool call and audits it. Behind it, mcp-jira, mcp-github and mcp-postgres run as ClusterIP services fenced by a NetworkPolicy that only admits the gateway. Downstream credentials come from External Secrets; every call is written to an audit log with OpenTelemetry spans." width="1200" height="720" loading="lazy" decoding="async" />
+  <figcaption>One ingress, one gateway, ClusterIP-only MCP servers behind a NetworkPolicy.</figcaption>
+</figure>
 
 Each MCP server is its own Deployment and ClusterIP Service. None of them are exposed outside the cluster. The gateway is the only thing with an Ingress.
 
