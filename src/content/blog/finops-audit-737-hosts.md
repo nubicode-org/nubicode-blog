@@ -4,6 +4,8 @@ description: "How we inventoried 737 hosts across three clouds, sorted them into
 pubDate: 2026-08-19
 tags: [finops, aws, gcp, azure, kubernetes]
 proof: [PP-01]
+image: /images/finops-audit-737-hosts/cover.png
+imageAlt: "FinOps audit of 737 hosts: the script, the buckets, the savings — 737 hosts · 3 clouds · 4 buckets"
 tldr: "Inventory by script, bucket by evidence (keep / rightsize / decommission / ask), price the buckets, commit last. The deliverable is a re-runnable job, not a PDF."
 ---
 
@@ -14,6 +16,11 @@ An AI/analytics platform, three clouds, 737 hosts, and a bill that had grown fas
 The ask was "reduce cloud cost." The first thing we did was refuse to open Cost Explorer.
 
 Cost tooling tells you what you spend. It doesn't tell you what a host is *for*, and that's the only question that produces savings you can defend in a room with the engineers who own the workloads.
+
+<figure class="diagram">
+  <img src="/images/finops-audit-737-hosts/diagram.png" alt="Process diagram of a five-step FinOps audit: 1 inventory 737 hosts across three clouds into one CSV by script in about 20 minutes, 2 bucket each host as decommission, rightsize, ask or keep by rule, 3 price the buckets from the billing export, 4 buy commitments last on the surviving fleet, 5 re-run monthly and post the diff to Slack. Savings ranked: decommission largest, then rightsizing, orphaned resources, and commitments last." width="1200" height="740" loading="lazy" decoding="async" />
+  <figcaption>The order is the point: cleanup first, commitments last, and the job keeps running.</figcaption>
+</figure>
 
 ## Step 1 — Inventory by script
 

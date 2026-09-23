@@ -3,6 +3,8 @@ title: "Stop deploying :latest: immutable image tags with Git SHAs"
 description: "Tag images with the Git commit SHA, make the registry refuse overwrites, promote one image from dev to prod, and roll back with git revert."
 pubDate: 2026-09-16
 tags: [containers, ecr, kubernetes, github-actions, gitops]
+image: /images/immutable-image-tags-git-sha/cover.png
+imageAlt: "Stop deploying :latest — immutable image tags with Git SHAs — 1 commit = 1 tag, forever"
 tldr: "Tag every image with the Git SHA that built it, turn on tag immutability in the registry, build once and promote the same image through every environment, and roll back by reverting a commit. You get a one-line answer to 'what's running in prod?' and rollbacks that can't pick up surprise changes."
 ---
 
@@ -10,6 +12,11 @@ tldr: "Tag every image with the Git SHA that built it, turn on tag immutability 
 "What version is running in production?" should take five seconds to answer. On a lot of the clusters we inherit, it takes an afternoon: the Deployment says `api:latest`, the registry says `latest` was pushed three times this week, and nobody is sure which of those pushes the pods pulled.
 
 Mutable tags are the root cause. Here's how we remove them.
+
+<figure class="diagram">
+  <img src="/images/immutable-image-tags-git-sha/diagram.png" alt="Pipeline diagram: a git commit is built once by GitHub Actions using an OIDC role and pushed to Amazon ECR tagged with the commit SHA; ECR tag immutability rejects any re-push to the same tag. Promotion copies the same SHA tag from envs/staging/values.yaml to envs/prod/values.yaml in the GitOps repo, ArgoCD syncs each environment and pulls the image by SHA, and rollback is a git revert of the promotion commit." width="1200" height="700" loading="lazy" decoding="async" />
+  <figcaption>The tag is the provenance. Promotion and rollback are Git commits.</figcaption>
+</figure>
 
 ## The problem with `:latest` (and `:v2`, and `:prod`)
 

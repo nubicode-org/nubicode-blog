@@ -4,6 +4,8 @@ description: "ArgoCD on a multi-cloud AI agent platform: app-of-apps, versioned 
 pubDate: 2026-08-26
 tags: [argocd, gitops, kubernetes, helm, github-actions]
 proof: [PP-06, PP-07, PP-08]
+image: /images/gitops-argocd-zero-drift/cover.png
+imageAlt: "GitOps with ArgoCD: zero config drift across multi-cloud Kubernetes — 0 drift incidents in 9 months"
 tldr: "Zero drift for nine months came from four things: kubectl apply was not an option, every chart had a version, ArgoCD self-healed and pruned, and every cluster was bootstrapped the same way. Discipline was not one of them."
 ---
 
@@ -15,15 +17,10 @@ For an AI agent platform running on Kubernetes across more than one cloud, we ne
 
 ## Architecture
 
-```
-GitHub (platform-charts) ──GitHub Actions──▶ OCI registry (Helm charts, semver)
-                                                      │
-GitHub (platform-envs) ──▶ ArgoCD (per cluster) ──────┘
-   envs/
-     prod-aws/    apps.yaml  (app-of-apps)
-     prod-gcp/    apps.yaml
-     staging/     apps.yaml
-```
+<figure class="diagram">
+  <img src="/images/gitops-argocd-zero-drift/diagram.png" alt="GitOps flow diagram: the platform-charts repo is published by GitHub Actions to an OCI registry as semver Helm charts. ArgoCD in each cluster pulls the pinned chart version and watches its folder in the platform-envs repo, then reconciles the prod-aws, prod-gcp and staging clusters with selfHeal and prune. Human kubectl apply to production is blocked; an OpenTelemetry Collector ships ArgoCD sync metrics and alerts on any app out of sync for more than 10 minutes." width="1200" height="720" loading="lazy" decoding="async" />
+  <figcaption>Charts are versioned artifacts; envs hold only Applications and values. ArgoCD is the only writer.</figcaption>
+</figure>
 
 Two repos. **Charts** are built and published as versioned OCI artifacts. **Envs** hold only `Application` manifests and `values.yaml` per environment. ArgoCD in each cluster watches its env folder.
 

@@ -4,6 +4,8 @@ const {
   description,
   canonical = Astro.url.href,
   image = "https://www.nubicode.com/logos/og-image.png",
+  imageAlt,
+  imageSize,
   type = "website",
   jsonld = [],
 } = Astro.props;
@@ -44,11 +46,16 @@ const org = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={image} />
+    {image.endsWith(".png") && <meta property="og:image:type" content="image/png" />}
+    {imageSize && <meta property="og:image:width" content={String(imageSize[0])} />}
+    {imageSize && <meta property="og:image:height" content={String(imageSize[1])} />}
+    {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@nubicode" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+    {imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -145,7 +152,10 @@ const org = {
       .footer a { color: var(--ink-2); } .footer a:hover { color: var(--accent); }
       .footer-bottom { max-width: 1400px; margin: 2.5rem auto 0; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--ink-3); font-size: .85rem; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between; }
       @media (max-width: 720px) { .footer-container { grid-template-columns: 1fr; gap: 1.75rem; } main { padding: 2.5rem 1.25rem 4rem; } }
-      img { max-width: 100%; border-radius: 16px; }
+      img { max-width: 100%; height: auto; border-radius: 16px; }
+      figure.diagram { margin: 2rem 0 2.25rem; }
+      figure.diagram img { display: block; width: 100%; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+      figure.diagram figcaption { margin-top: .6rem; color: var(--ink-2); font-size: .9rem; line-height: 1.5; text-align: center; }
       .nav-logo img { border-radius: 0; }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
     </style>

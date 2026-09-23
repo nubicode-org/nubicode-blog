@@ -36,7 +36,7 @@ const jsonld = [
   },
 ];
 ---
-<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} type="article" jsonld={jsonld}>
+<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageAlt={post.data.imageAlt} imageSize={post.data.image ? [1200, 627] : undefined} type="article" jsonld={jsonld}>
   <article>
     <h1>{post.data.title}</h1>
     <p class="meta">
