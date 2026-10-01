@@ -66,6 +66,7 @@ const org = {
     <meta name="theme-color" content="#4768F2" />
     <script type="application/ld+json" set:html={JSON.stringify(org)} />
     {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    <script is:inline>document.documentElement.classList.add("js")</script>
     <style is:global>
       /* Tokens: see DESIGN.md — mirrors nubicode-webpage/index.html :root. Light-only by brand decision. */
       :root {
@@ -99,7 +100,8 @@ const org = {
       .nav-link:hover { color: var(--accent); text-decoration: none; }
       .nav-cta { background: var(--glass-bg-hover); color: var(--accent); border: 1px solid var(--glass-border); border-radius: 50px; padding: .6rem 1.4rem; font-weight: 600; box-shadow: var(--glass-shadow), var(--glass-inset); transition: all .3s var(--morph-timing); }
       .nav-cta:hover { transform: translateY(-3px) scale(1.02); background: rgba(71,104,242,.15); box-shadow: var(--glass-shadow-hover), var(--glass-inset); text-decoration: none; }
-      @media (max-width: 640px) { .nav-menu { gap: 1rem; } .nav-link.hide-sm { display: none; } .navbar { padding: .75rem 1.25rem; } }
+      .nav-cta { white-space: nowrap; }
+      @media (max-width: 640px) { .nav-menu { gap: 1rem; } .nav-link.hide-sm { display: none; } .navbar { padding: .75rem 1.25rem; } .nav-cta { padding: .55rem 1.1rem; font-size: .9rem; } }
 
       /* layout */
       main { max-width: 800px; margin: 0 auto; padding: 4rem 1.25rem 5rem; }
@@ -157,10 +159,91 @@ const org = {
       figure.diagram img { display: block; width: 100%; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
       figure.diagram figcaption { margin-top: .6rem; color: var(--ink-2); font-size: .9rem; line-height: 1.5; text-align: center; }
       .nav-logo img { border-radius: 0; }
-      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+      /* ---- polish ---- */
+      /* focus + skip link */
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+      .skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 300; background: var(--accent); color: #fff; border-radius: 50px; padding: .6rem 1.2rem; font-weight: 600; transition: top .3s var(--morph-timing); }
+      .skip-link:focus { top: .75rem; text-decoration: none; }
+      ::selection { background: var(--accent-light); }
+
+      /* page transitions (cross-document View Transitions; no JS, progressive) */
+      @view-transition { navigation: auto; }
+      .navbar { view-transition-name: navbar; }
+      ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .3s; animation-timing-function: var(--morph-timing); }
+
+      /* reading progress (scroll-driven; hidden where unsupported) */
+      .progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 200; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--accent), var(--accent-2)); pointer-events: none; }
+      /* timeline via a variable: the minifier otherwise folds it into the animation shorthand, which browsers reject */
+      @supports (animation-timeline: scroll()) { .progress { --progress-timeline: scroll(root); animation: progress linear both; animation-timeline: var(--progress-timeline); } }
+      @keyframes progress { to { transform: scaleX(1); } }
+
+      /* skeletons: images reserve their box (width/height attrs) and shimmer until decoded */
+      .skeleton, figure.diagram img { background-color: var(--surface-2); }
+      .js .skeleton:not(.is-loaded), .js figure.diagram img:not(.is-loaded) {
+        background-image: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.75) 50%, transparent 70%);
+        background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+      @keyframes shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+
+      /* tooltips: data-tooltip on a focusable element; aria-label carries the same text */
+      [data-tooltip] { position: relative; }
+      [data-tooltip]::after { content: attr(data-tooltip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 50;
+        transform: translate(-50%, 4px); opacity: 0; pointer-events: none; white-space: nowrap;
+        background: var(--ink); color: #fff; font: 600 .8rem/1.2 'Inter', -apple-system, sans-serif; letter-spacing: 0; text-transform: none;
+        padding: .4rem .65rem; border-radius: 14px; box-shadow: var(--glass-shadow);
+        transition: opacity .3s var(--morph-timing), transform .3s var(--morph-timing); }
+      [data-tooltip-pos="bottom"]::after { bottom: auto; top: calc(100% + 8px); transform: translate(-50%, -4px); }
+      [data-tooltip-pos="left"]::after { left: auto; right: calc(100% + 8px); bottom: 50%; transform: translate(4px, 50%); }
+      @media (hover: hover) { [data-tooltip]:hover::after { opacity: 1; transform: translate(-50%, 0); transition-delay: .15s; } [data-tooltip-pos="left"]:hover::after { transform: translate(0, 50%); } }
+      [data-tooltip]:focus-visible::after, [data-tooltip].is-flashing::after { opacity: 1; transform: translate(-50%, 0); }
+      [data-tooltip-pos="left"]:focus-visible::after, [data-tooltip-pos="left"].is-flashing::after { transform: translate(0, 50%); }
+
+      /* small glass buttons (share, copy) */
+      .chip-btn { display: inline-flex; align-items: center; gap: .4rem; font: 600 .85rem/1 'Inter', -apple-system, sans-serif; color: var(--ink-2); cursor: pointer;
+        background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50px; padding: .5rem .95rem; box-shadow: var(--glass-shadow), var(--glass-inset);
+        transition: color .3s var(--morph-timing), background .3s var(--morph-timing), transform .3s var(--morph-timing); }
+      .chip-btn:hover { color: var(--accent); background: var(--glass-bg-hover); transform: translateY(-2px); text-decoration: none; }
+      .chip-btn svg { width: 15px; height: 15px; }
+
+      /* code blocks: copy button */
+      .code-block { position: relative; }
+      .code-block { margin: 1.2em 0; }
+      .code-block pre { margin: 0; padding-right: 3rem; }
+      .copy-btn { position: absolute; top: .55rem; right: .55rem; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
+        color: #F0F2F7; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); opacity: .75; transition: opacity .3s var(--morph-timing), background .3s var(--morph-timing); }
+      .copy-btn:hover, .copy-btn:focus-visible { opacity: 1; background: rgba(255,255,255,.16); }
+      .copy-btn svg { width: 16px; height: 16px; }
+      .copy-btn::after { background: #fff !important; color: var(--ink) !important; } /* dark tooltip would vanish on the dark code block */
+      .copy-btn .icon-done, .copy-btn.is-done .icon-copy { display: none; }
+      .copy-btn.is-done .icon-done { display: block; }
+
+      /* heading anchors */
+      article h2[id], article h3[id] { scroll-margin-top: 88px; }
+      .anchor { margin-left: .4rem; color: var(--ink-3); font-weight: 600; opacity: 0; transition: opacity .3s var(--morph-timing), color .3s var(--morph-timing); }
+      article h2:hover .anchor, article h3:hover .anchor, .anchor:focus-visible { opacity: 1; }
+      .anchor:hover { color: var(--accent); text-decoration: none; }
+      @media (hover: none) { .anchor { opacity: .6; } }
+
+      /* share row + previous/next */
+      .share { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 2.5rem; }
+      .share-label { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-right: .25rem; }
+      .post-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+      .post-nav-link { display: flex; flex-direction: column; gap: .3rem; border-radius: 20px; padding: 1.1rem 1.3rem; color: var(--ink); transition: transform .4s var(--morph-timing), box-shadow .4s var(--morph-timing), background .4s; }
+      .post-nav-link:hover { transform: translateY(-4px); background: var(--glass-bg-hover); box-shadow: var(--glass-shadow-hover), var(--glass-inset); text-decoration: none; }
+      .post-nav-link span { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+      .post-nav-link strong { font-size: 1rem; font-weight: 700; line-height: 1.35; letter-spacing: -.01em; }
+      .post-nav-link.next { text-align: right; grid-column: 2; }
+      @media (max-width: 640px) { .post-nav { grid-template-columns: 1fr; } .post-nav-link.next { grid-column: 1; } }
+
+      /* post list cards with cover thumbnails */
+      .card.has-cover { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; align-items: start; }
+      .card-cover { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 627; border-radius: 16px; border: 1px solid var(--glass-border); }
+      @media (max-width: 640px) { .card.has-cover { grid-template-columns: 1fr; gap: 1rem; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } @view-transition { navigation: none; } }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <nav class="navbar" aria-label="Main navigation">
       <div class="nav-container">
         <a href="https://www.nubicode.com/?utm_source=blog&utm_medium=nav" class="nav-logo" aria-label="NubiCode home">
@@ -169,12 +252,12 @@ const org = {
         <div class="nav-menu">
           <a href="/" class="nav-link">Blog</a>
           <a href="https://www.nubicode.com/#services" class="nav-link hide-sm">Services</a>
-          <a href="/rss.xml" class="nav-link hide-sm">RSS</a>
+          <a href="/rss.xml" class="nav-link hide-sm" data-tooltip="Subscribe via RSS" data-tooltip-pos="bottom" aria-label="RSS feed — subscribe via RSS" data-astro-prefetch="false">RSS</a>
           <a href="https://www.nubicode.com/?utm_source=blog&utm_medium=nav#contact" class="nav-cta">Get Started</a>
         </div>
       </div>
     </nav>
-    <main><slot /></main>
+    <main id="main"><slot /></main>
     <footer class="footer">
       <div class="footer-container">
         <div>
@@ -202,5 +285,16 @@ const org = {
       </div>
       <div class="footer-bottom"><span>© 2026 NubiCode. All rights reserved.</span><span>info@nubicode.com</span></div>
     </footer>
+    <script>
+      // Skeleton → loaded: stop the shimmer once each image has decoded (or failed).
+      const settle = (img: HTMLImageElement) => img.classList.add("is-loaded");
+      document.querySelectorAll<HTMLImageElement>("img.skeleton, figure.diagram img").forEach((img) => {
+        if (img.complete) settle(img);
+        else { img.addEventListener("load", () => settle(img), { once: true }); img.addEventListener("error", () => settle(img), { once: true }); }
+      });
+      if ("serviceWorker" in navigator && location.hostname !== "localhost") {
+        addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+      }
+    </script>
   </body>
 </html>
