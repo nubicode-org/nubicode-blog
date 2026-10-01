@@ -1,7 +1,7 @@
 ---
 title: "Self-hosted LLM inference on Kubernetes with LightLLM"
 description: "Serving our own models behind the MCP gateway: GPU node pools, continuous batching with LightLLM, and autoscaling on queue depth instead of CPU."
-pubDate: 2026-10-01
+pubDate: 2026-09-30
 tags: [kubernetes, llm, inference, gpu, lightllm, ai-infrastructure]
 proof: [PP-16, PP-08]
 image: /images/lightllm-inference-kubernetes/cover.png

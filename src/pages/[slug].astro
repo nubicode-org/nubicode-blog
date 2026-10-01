@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const url = `https://blog.nubicode.com/${post.id}`;
-const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }); // pubDate is a UTC-midnight date; local TZ would show the day before
 const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : "https://www.nubicode.com/logos/og-image.png";
 const jsonld = [
   {
