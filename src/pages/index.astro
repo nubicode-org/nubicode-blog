@@ -1,8 +1,8 @@
 ---
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }); // pubDate is a UTC-midnight date; local TZ would show the day before
+import { published, readingMinutes, formatDate } from "../lib/posts.js";
+const posts = await published();
+const fmt = (d) => formatDate(d, "short");
 const jsonld = [{
   "@context": "https://schema.org",
   "@type": "Blog",
@@ -16,12 +16,18 @@ const jsonld = [{
   <h1 class="section-title">Nearshore Platform Notes</h1>
   <p class="section-subtitle">How we build and run cloud-native platforms and AI infrastructure for US teams. Real numbers, real configs, anonymized clients.</p>
   <div class="post-list">
-    {posts.map((p) => (
-      <a class="card glass" href={`/${p.id}`}>
-        <h3>{p.data.title}</h3>
-        <div class="meta">{fmt(p.data.pubDate)} · {p.data.author}</div>
-        <p>{p.data.description}</p>
-        <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+    {posts.map((p, i) => (
+      <a class:list={["card glass", { "has-cover": p.data.image }]} href={`/${p.id}`}>
+        {p.data.image && (
+          <img class="card-cover skeleton" src={p.data.image} alt="" width="1200" height="627"
+            loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} decoding="async" />
+        )}
+        <div>
+          <h3>{p.data.title}</h3>
+          <div class="meta"><time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmt(p.data.pubDate)}</time> · {readingMinutes(p.body)} min read · {p.data.author}</div>
+          <p>{p.data.description}</p>
+          <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+        </div>
       </a>
     ))}
   </div>
