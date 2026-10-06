@@ -35,4 +35,4 @@ Terraform in [`infra/`](./infra/README.md): private S3 bucket + CloudFront (OAC,
 
 ## Design
 
-Tokens in `src/layouts/Base.astro` mirror `nubicode-webpage/index.html` (`Inter`, accent `#4768F2`, glass surfaces). Change them there first, then here. OG image defaults to `https://www.nubicode.com/logos/og-image.png`; per-post images go in `public/images/` and are set with `image:` in frontmatter — exported by design, never generated.
+The standard is [`DESIGN.md`](./DESIGN.md), which mirrors `nubicode-webpage/index.html`. Styles live in `src/styles/global.css`; change a value on the website first, then in `DESIGN.md`, then there. OG image defaults to `https://www.nubicode.com/logos/og-image.png`; per-post images go in `public/images/` and are set with `image:` in frontmatter — exported by design, never generated.
