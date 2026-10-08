@@ -400,14 +400,34 @@ function shot(html, out, w, h, scale) {
   console.log("✓", out);
 }
 
+// Index-card thumbnail: the diagram without its title band (which repeats the post title next to
+// the card) and footer, fitted whole into a 2:1 box on the page background, downsized for a ~280px card slot.
+const THUMB_W = 840, THUMB_RATIO = 2, CROP_TOP = 125, CROP_BOTTOM = 72; // CSS px at 1x
+async function thumb(slug, W, H) {
+  const { default: sharp } = await import("sharp");
+  const src = join(root, `public/images/${slug}/diagram.png`), out = `public/images/${slug}/diagram-thumb.png`;
+  const scale = (await sharp(src).metadata()).width / W;
+  const top = Math.round(CROP_TOP * scale), height = Math.round((H - CROP_TOP - CROP_BOTTOM) * scale);
+  await sharp(src).extract({ left: 0, top, width: Math.round(W * scale), height })
+    .resize(THUMB_W, Math.round(THUMB_W / THUMB_RATIO), { fit: "contain", background: T.bg })
+    .png({ compressionLevel: 9, palette: true }).toFile(join(root, out));
+  console.log("✓", out);
+}
+
 export { posts };
-const only = process.argv.slice(2);
+// Usage: node scripts/render-images.mjs [--thumbs-only] [slug ...]
+const args = process.argv.slice(2);
+const thumbsOnly = args.includes("--thumbs-only");
+const only = args.filter((a) => !a.startsWith("--"));
 if (import.meta.url === `file://${process.argv[1]}`) {
   for (const [slug, p] of Object.entries(posts)) {
     if (only.length && !only.includes(slug)) continue;
     mkdirSync(join(root, "public/images", slug), { recursive: true });
-    shot(coverPage(p.cover), `public/images/${slug}/cover.png`, 1200, 627, 1);
     const [W, H, eyebrow, title, body] = p.diagram;
-    shot(diagramPage(W, H, eyebrow, title, body), `public/images/${slug}/diagram.png`, W, H, 2);
+    if (!thumbsOnly) {
+      shot(coverPage(p.cover), `public/images/${slug}/cover.png`, 1200, 627, 1);
+      shot(diagramPage(W, H, eyebrow, title, body), `public/images/${slug}/diagram.png`, W, H, 2);
+    }
+    await thumb(slug, W, H);
   }
 }
