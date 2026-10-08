@@ -1,12 +1,20 @@
 ---
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import Base from "../layouts/Base.astro";
 import { published, readingMinutes, formatDate } from "../lib/posts.js";
 const posts = await published();
 const fmt = (d) => formatDate(d, "short");
 // Card thumbnail = the post's diagram (scripts/render-images.mjs writes diagram-thumb.png). Not the cover:
 // the cover repeats the title that sits right next to it.
-const thumb = (id) => (existsSync(`public/images/${id}/diagram-thumb.png`) ? `/images/${id}/diagram-thumb.png` : null);
+// ?v=<content hash>: images are cached by browsers (1 day) and the service worker, so a re-rendered
+// thumbnail at the same path would otherwise show stale; a new hash is a new URL.
+const thumb = (id) => {
+  const file = `public/images/${id}/diagram-thumb.png`;
+  if (!existsSync(file)) return null;
+  const v = createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, 10);
+  return `/images/${id}/diagram-thumb.png?v=${v}`;
+};
 
 // Topic filter: tags shared by 2+ posts are always visible; one-off tags sit behind "+N more".
 const counts = new Map();
