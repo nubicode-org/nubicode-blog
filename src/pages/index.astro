@@ -7,6 +7,14 @@ const fmt = (d) => formatDate(d, "short");
 // Card thumbnail = the post's diagram (scripts/render-images.mjs writes diagram-thumb.png). Not the cover:
 // the cover repeats the title that sits right next to it.
 const thumb = (id) => (existsSync(`public/images/${id}/diagram-thumb.png`) ? `/images/${id}/diagram-thumb.png` : null);
+
+// Topic filter: tags shared by 2+ posts are always visible; one-off tags sit behind "+N more".
+const counts = new Map();
+for (const p of posts) for (const t of p.data.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+const byCount = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const primary = byCount.filter(([, n]) => n > 1);
+const extra = byCount.filter(([, n]) => n === 1);
+
 const jsonld = [{
   "@context": "https://schema.org",
   "@type": "Blog",
@@ -16,23 +24,89 @@ const jsonld = [{
   publisher: { "@id": "https://www.nubicode.com/#organization" },
 }];
 ---
-<Base title="NubiCode Blog — cloud-native, Kubernetes & AI infrastructure notes" description="Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode's nearshore team in El Salvador and Baltimore." canonical="https://blog.nubicode.com/" jsonld={jsonld}>
+<Base wide title="NubiCode Blog — cloud-native, Kubernetes & AI infrastructure notes" description="Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode's nearshore team in El Salvador and Baltimore." canonical="https://blog.nubicode.com/" jsonld={jsonld}>
   <h1 class="section-title">Nearshore Platform Notes</h1>
   <p class="section-subtitle">How we build and run cloud-native platforms and AI infrastructure for US teams. Real numbers, real configs, anonymized clients.</p>
-  <div class="post-list">
+
+  <div class="filters" role="toolbar" aria-label="Filter posts by topic" id="filters">
+    <button type="button" class="filter-chip" data-tag="" aria-pressed="true">All <span class="count">{posts.length}</span></button>
+    {primary.map(([t, n]) => <button type="button" class="filter-chip" data-tag={t} aria-pressed="false">{t} <span class="count">{n}</span></button>)}
+    {extra.map(([t, n]) => <button type="button" class="filter-chip is-extra" data-tag={t} aria-pressed="false">{t} <span class="count">{n}</span></button>)}
+    {extra.length > 0 && <button type="button" class="filter-more" aria-expanded="false" aria-controls="filters">+{extra.length} more</button>}
+  </div>
+  <p class="filter-status" aria-live="polite"></p>
+
+  <div class="post-grid">
     {posts.map((p, i) => (
-      <a class:list={["card glass", { "has-thumb": thumb(p.id) }]} href={`/${p.id}`}>
+      <article class="card glass" data-tags={p.data.tags.join(" ")}>
         {thumb(p.id) && (
-          <img class="card-thumb skeleton" src={thumb(p.id)} alt="" width="840" height="420"
-            loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} decoding="async" />
+          <img class="card-thumb skeleton" src={thumb(p.id)} alt="" width="1200" height="600"
+            loading={i < 3 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} decoding="async" />
         )}
-        <div>
-          <h3>{p.data.title}</h3>
-          <div class="meta"><time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmt(p.data.pubDate)}</time> · {readingMinutes(p.body)} min read · {p.data.author}</div>
-          <p>{p.data.description}</p>
-          <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+        <div class="card-body">
+          <h2 class="card-title"><a class="card-link" href={`/${p.id}`}>{p.data.title}</a></h2>
+          <div class="meta"><time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{fmt(p.data.pubDate)}</time> · {readingMinutes(p.body)} min read</div>
+          <p class="card-desc">{p.data.description}</p>
+          <div class="tags">
+            {p.data.tags.map((t) => <button type="button" class="tag" data-tag={t} aria-label={`Show posts tagged ${t}`}>{t}</button>)}
+          </div>
         </div>
-      </a>
+      </article>
     ))}
   </div>
+
+  <script>
+    const filters = document.getElementById("filters")!;
+    const status = document.querySelector<HTMLElement>(".filter-status")!;
+    const cards = [...document.querySelectorAll<HTMLElement>(".post-grid .card")];
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+    function render(tag: string) {
+      let shown = 0;
+      for (const card of cards) {
+        const match = !tag || (card.dataset.tags ?? "").split(" ").includes(tag);
+        card.hidden = !match;
+        if (match) shown++;
+        card.querySelectorAll<HTMLElement>(".tag").forEach((b) => b.classList.toggle("is-active", b.dataset.tag === tag));
+      }
+      filters.querySelectorAll<HTMLButtonElement>(".filter-chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tag === tag)));
+      const active = filters.querySelector<HTMLElement>(`.filter-chip[data-tag="${CSS.escape(tag)}"]`);
+      if (active?.classList.contains("is-extra")) expand(true);
+      status.textContent = tag ? `${shown} ${shown === 1 ? "post" : "posts"} tagged “${tag}”` : "";
+    }
+
+    function apply(tag: string) {
+      const url = new URL(location.href);
+      tag ? url.searchParams.set("tag", tag) : url.searchParams.delete("tag");
+      history.replaceState(null, "", url);
+      // Animate the reflow where supported (same-document View Transition); instant otherwise.
+      if (document.startViewTransition && !reduce.matches) document.startViewTransition(() => render(tag));
+      else render(tag);
+    }
+
+    const more = filters.querySelector<HTMLButtonElement>(".filter-more");
+    const moreLabel = more?.textContent ?? "";
+    function expand(open: boolean) {
+      filters.classList.toggle("is-expanded", open);
+      if (more) { more.setAttribute("aria-expanded", String(open)); more.textContent = open ? "Fewer" : moreLabel; }
+    }
+    more?.addEventListener("click", () => expand(!filters.classList.contains("is-expanded")));
+
+    filters.addEventListener("click", (e) => {
+      const chip = (e.target as HTMLElement).closest<HTMLButtonElement>(".filter-chip");
+      if (chip) apply(chip.getAttribute("aria-pressed") === "true" ? "" : chip.dataset.tag ?? "");
+    });
+
+    // Tags on a card filter too (and toggle off when already active).
+    document.querySelector(".post-grid")!.addEventListener("click", (e) => {
+      const tagBtn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag");
+      if (!tagBtn) return;
+      const tag = tagBtn.classList.contains("is-active") ? "" : tagBtn.dataset.tag ?? "";
+      apply(tag);
+      if (filters.getBoundingClientRect().top < 0) filters.scrollIntoView({ behavior: reduce.matches ? "auto" : "smooth", block: "start" });
+    });
+
+    const initial = new URL(location.href).searchParams.get("tag") ?? "";
+    render(cards.some((c) => (c.dataset.tags ?? "").split(" ").includes(initial)) ? initial : "");
+  </script>
 </Base>

@@ -5,6 +5,7 @@ const {
   description,
   canonical = Astro.url.href,
   image = "https://www.nubicode.com/logos/og-image.png",
+  wide = false, // index grid gets a wider column than the 800px reading measure
   imageAlt,
   imageSize,
   type = "website",
@@ -84,7 +85,7 @@ const org = {
         </div>
       </div>
     </nav>
-    <main id="main"><slot /></main>
+    <main id="main" class:list={[{ wide }]}><slot /></main>
     <footer class="footer">
       <div class="footer-container">
         <div>

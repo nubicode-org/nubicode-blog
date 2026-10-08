@@ -80,15 +80,17 @@ function pill(x, y, w, n, label, sub) {
   <text x="${x + 52}" y="${y + 41}" font-size="12.5" fill="${T.ink2}">${esc(sub)}</text>`;
 }
 
-function diagramPage(W, H, eyebrow, title, body) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <defs>
+const defs = () => `<defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${T.accent}"/></marker>
     <marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${T.ink3}"/></marker>
     <filter id="sh" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="${T.accent}" flood-opacity=".09"/></filter>
     <radialGradient id="g1" cx="12%" cy="0%" r="60%"><stop offset="0" stop-color="${T.accent}" stop-opacity=".13"/><stop offset="1" stop-color="${T.accent}" stop-opacity="0"/></radialGradient>
     <radialGradient id="g2" cx="95%" cy="100%" r="55%"><stop offset="0" stop-color="${T.accent2}" stop-opacity=".12"/><stop offset="1" stop-color="${T.accent2}" stop-opacity="0"/></radialGradient>
-  </defs>
+  </defs>`;
+
+function diagramPage(W, H, eyebrow, title, body) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  ${defs()}
   <rect width="${W}" height="${H}" fill="${T.bg}"/><rect width="${W}" height="${H}" fill="url(#g1)"/><rect width="${W}" height="${H}" fill="url(#g2)"/>
   ${text(60, 60, eyebrow.toUpperCase(), { size: 13, weight: 700, fill: T.accent, ls: 0.08 })}
   ${text(60, 96, title, { size: 28, weight: 800, fill: T.ink, ls: -0.02 })}
@@ -400,18 +402,22 @@ function shot(html, out, w, h, scale) {
   console.log("✓", out);
 }
 
-// Index-card thumbnail: the diagram without its title band (which repeats the post title next to
-// the card) and footer, fitted whole into a 2:1 box on the page background, downsized for a ~280px card slot.
-const THUMB_W = 840, THUMB_RATIO = 2, CROP_TOP = 125, CROP_BOTTOM = 72; // CSS px at 1x
-async function thumb(slug, W, H) {
+// Index-card thumbnail: the diagram body only (no title band, no footer), drawn from the same SVG
+// on a flat --bg and scaled to fit a 2:1 box with preserveAspectRatio="meet" — nothing is cropped,
+// and any spare space is the same flat color as the box, so it reads as one image.
+const THUMB = { w: 800, h: 400, pad: 24, top: 118, bottom: 70 }; // top/bottom: CSS px of title band / footer
+function thumbPage(W, H, body) {
+  const vb = `${-THUMB.pad} ${THUMB.top - THUMB.pad} ${W + THUMB.pad * 2} ${H - THUMB.top - THUMB.bottom + THUMB.pad * 2}`;
+  return `<!doctype html><html><head>${head}</head><body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="${THUMB.w}" height="${THUMB.h}" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">
+  ${defs()}<rect x="-9999" y="-9999" width="99999" height="99999" fill="${T.bg}"/>${body}</svg></body></html>`;
+}
+async function thumb(slug, W, H, body) {
+  const out = `public/images/${slug}/diagram-thumb.png`;
+  shot(thumbPage(W, H, body), out, THUMB.w, THUMB.h, 1.5);
   const { default: sharp } = await import("sharp");
-  const src = join(root, `public/images/${slug}/diagram.png`), out = `public/images/${slug}/diagram-thumb.png`;
-  const scale = (await sharp(src).metadata()).width / W;
-  const top = Math.round(CROP_TOP * scale), height = Math.round((H - CROP_TOP - CROP_BOTTOM) * scale);
-  await sharp(src).extract({ left: 0, top, width: Math.round(W * scale), height })
-    .resize(THUMB_W, Math.round(THUMB_W / THUMB_RATIO), { fit: "contain", background: T.bg })
-    .png({ compressionLevel: 9, palette: true }).toFile(join(root, out));
-  console.log("✓", out);
+  const buf = await sharp(join(root, out)).png({ compressionLevel: 9, palette: true }).toBuffer();
+  writeFileSync(join(root, out), buf);
 }
 
 export { posts };
@@ -428,6 +434,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       shot(coverPage(p.cover), `public/images/${slug}/cover.png`, 1200, 627, 1);
       shot(diagramPage(W, H, eyebrow, title, body), `public/images/${slug}/diagram.png`, W, H, 2);
     }
-    await thumb(slug, W, H);
+    await thumb(slug, W, H, body);
   }
 }

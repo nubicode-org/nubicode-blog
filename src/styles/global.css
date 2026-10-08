@@ -49,6 +49,7 @@ a:hover { text-decoration: underline; }
 
 /* layout */
 main { max-width: 800px; margin: 0 auto; padding: 4rem 1.25rem 5rem; }
+main.wide { max-width: 1200px; }
 .section-title { font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 1rem; color: var(--ink); }
 .section-subtitle { font-size: clamp(1.0625rem, 2vw, 1.25rem); color: var(--ink-2); line-height: 1.6; margin: 0 0 2.5rem; max-width: 800px; }
 article h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.02em; margin: .3em 0 .5em; }
@@ -75,12 +76,43 @@ th { background: var(--surface-2); color: var(--ink-2); font-weight: 700; font-s
 article table { display: block; overflow-x: auto; margin: 1.2em 0; }
 
 /* post list */
-.post-list { display: grid; gap: 1.25rem; }
-.card { display: block; border-radius: 24px; padding: 1.5rem 1.75rem; color: inherit; position: relative; overflow: hidden; transition: transform .4s var(--morph-timing), box-shadow .4s var(--morph-timing), background .4s; }
+
+/* index: topic filter */
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .75rem; scroll-margin-top: 96px; }
+html:not(.js) .filters, html:not(.js) .filter-status { display: none; } /* no JS → every post is shown, nothing to filter */
+.filters:not(.is-expanded) .is-extra { display: none; }
+.filter-chip, .filter-more { display: inline-flex; align-items: center; gap: .4rem; cursor: pointer; font: 600 .85rem/1 'Inter', -apple-system, sans-serif;
+  color: var(--ink-2); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50px; padding: .55rem .95rem;
+  box-shadow: var(--glass-shadow), var(--glass-inset); transition: color .3s var(--morph-timing), background .3s var(--morph-timing), transform .3s var(--morph-timing); }
+.filter-chip:hover, .filter-more:hover { color: var(--accent); background: var(--glass-bg-hover); transform: translateY(-2px); }
+.filter-chip .count { font-size: .75rem; color: var(--ink-3); font-weight: 600; }
+.filter-chip[aria-pressed="true"] { background: var(--accent); border-color: transparent; color: #fff; box-shadow: 0 8px 24px var(--accent-glow); }
+.filter-chip[aria-pressed="true"] .count { color: rgba(255,255,255,.8); }
+.filter-more { color: var(--accent); background: transparent; box-shadow: none; border-style: dashed; border-color: var(--line); }
+.filter-status { min-height: 1.4em; margin: 0 0 1rem; font-size: .9rem; font-weight: 600; color: var(--ink-2); }
+
+/* index: responsive card grid (1 → 2 → 3 columns) */
+.post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1.5rem; align-items: stretch; }
+.card { position: relative; display: flex; flex-direction: column; border-radius: 24px; padding: 1rem; overflow: hidden;
+  transition: transform .4s var(--morph-timing), box-shadow .4s var(--morph-timing), background .4s var(--morph-timing); }
+.card[hidden] { display: none; }
 .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,.1) 100%); }
-.card:hover { transform: translateY(-5px); background: var(--glass-bg-hover); box-shadow: var(--glass-shadow-hover), var(--glass-inset); text-decoration: none; }
-.card h3 { margin: 0 0 .4rem; font-size: 1.35rem; font-weight: 800; letter-spacing: -.015em; line-height: 1.25; }
-.card p { margin: .5rem 0 0; color: var(--ink-2); }
+.card:hover, .card:focus-within { transform: translateY(-5px); background: var(--glass-bg-hover); box-shadow: var(--glass-shadow-hover), var(--glass-inset); }
+.card:has(.card-link:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* whole diagram, 2:1, on the same flat --bg it was rendered on → fills the box, nothing cropped */
+.card-thumb { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: contain; border-radius: 16px; border: 1px solid var(--glass-border); }
+.card-body { display: flex; flex-direction: column; flex: 1; padding: 1rem .5rem .25rem; }
+.card-title { margin: 0 0 .4rem; font-size: 1.2rem; font-weight: 800; letter-spacing: -.015em; line-height: 1.3; }
+.card-link { color: var(--ink); }
+.card-link:hover { text-decoration: none; }
+.card-link::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; } /* whole card is the link */
+.card-link:focus-visible { outline: none; }
+.card-desc { margin: .5rem 0 1rem; color: var(--ink-2); font-size: .95rem; line-height: 1.6;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card .tags { margin-top: auto; position: relative; z-index: 2; } /* above the stretched link so tags stay clickable */
+button.tag { border: 0; cursor: pointer; font-family: inherit; line-height: inherit; transition: background .3s var(--morph-timing), color .3s var(--morph-timing); }
+button.tag:hover { background: rgba(71,104,242,.2); }
+button.tag.is-active { background: var(--accent); color: #fff; }
 
 /* cta */
 .cta { margin-top: 3rem; border-radius: 24px; padding: 1.75rem 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
@@ -178,8 +210,4 @@ article h2:hover .anchor, article h3:hover .anchor, .anchor:focus-visible { opac
 .post-nav-link.next { text-align: right; grid-column: 2; }
 @media (max-width: 640px) { .post-nav { grid-template-columns: 1fr; } .post-nav-link.next { grid-column: 1; } }
 
-/* post list cards with diagram thumbnails */
-.card.has-thumb { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; }
-.card-thumb { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 16px; border: 1px solid var(--glass-border); }
-@media (max-width: 640px) { .card.has-thumb { grid-template-columns: 1fr; gap: 1rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } @view-transition { navigation: none; } }
