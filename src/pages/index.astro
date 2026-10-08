@@ -30,6 +30,15 @@ const jsonld = [{
   url: "https://blog.nubicode.com/",
   description: "Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode's nearshore team.",
   publisher: { "@id": "https://www.nubicode.com/#organization" },
+  inLanguage: "en-US",
+  blogPost: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    url: `https://blog.nubicode.com/${p.id}`,
+    datePublished: p.data.pubDate.toISOString(),
+    ...(p.data.image && { image: `https://blog.nubicode.com${p.data.image}` }),
+    author: { "@type": "Person", name: p.data.author },
+  })),
 }];
 ---
 <Base wide title="NubiCode Blog — cloud-native, Kubernetes & AI infrastructure notes" description="Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode's nearshore team in El Salvador and Baltimore." canonical="https://blog.nubicode.com/" jsonld={jsonld}>

@@ -15,4 +15,5 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+Sitemap: https://www.nubicode.com/sitemap.xml
 Sitemap: https://blog.nubicode.com/sitemap-index.xml

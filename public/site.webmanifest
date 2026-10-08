@@ -1,0 +1,14 @@
+{
+  "name": "NubiCode Blog",
+  "short_name": "NubiCode",
+  "description": "Engineering notes on Kubernetes, GitOps, FinOps, cloud migrations and AI infrastructure from NubiCode.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#F0F2F7",
+  "theme_color": "#4768F2",
+  "icons": [
+    { "src": "/logos/favicon-48.png", "sizes": "48x48", "type": "image/png" },
+    { "src": "/logos/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
