@@ -36,3 +36,7 @@ Terraform in [`infra/`](./infra/README.md): private S3 bucket + CloudFront (OAC,
 ## Design
 
 The standard is [`DESIGN.md`](./DESIGN.md), which mirrors `nubicode-webpage/index.html`. Styles live in `src/styles/global.css`; change a value on the website first, then in `DESIGN.md`, then there. OG image defaults to `https://www.nubicode.com/logos/og-image.png`; per-post images go in `public/images/` and are set with `image:` in frontmatter — exported by design, never generated.
+
+## Working on the blog with Claude
+
+The project skill [`.claude/skills/nubicode-blog`](./.claude/skills/nubicode-blog/SKILL.md) covers writing posts, images, SEO/RSS and shipping; [`nubicode-design`](./.claude/skills/nubicode-design/SKILL.md) covers the visual standard. Claude Code loads both automatically in this repo.
