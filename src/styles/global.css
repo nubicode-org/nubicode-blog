@@ -178,8 +178,8 @@ article h2:hover .anchor, article h3:hover .anchor, .anchor:focus-visible { opac
 .post-nav-link.next { text-align: right; grid-column: 2; }
 @media (max-width: 640px) { .post-nav { grid-template-columns: 1fr; } .post-nav-link.next { grid-column: 1; } }
 
-/* post list cards with cover thumbnails */
-.card.has-cover { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; align-items: start; }
-.card-cover { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 627; border-radius: 16px; border: 1px solid var(--glass-border); }
-@media (max-width: 640px) { .card.has-cover { grid-template-columns: 1fr; gap: 1rem; } }
+/* post list cards with diagram thumbnails */
+.card.has-thumb { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; }
+.card-thumb { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 16px; border: 1px solid var(--glass-border); }
+@media (max-width: 640px) { .card.has-thumb { grid-template-columns: 1fr; gap: 1rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } @view-transition { navigation: none; } }

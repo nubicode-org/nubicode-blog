@@ -1,8 +1,12 @@
 ---
+import { existsSync } from "node:fs";
 import Base from "../layouts/Base.astro";
 import { published, readingMinutes, formatDate } from "../lib/posts.js";
 const posts = await published();
 const fmt = (d) => formatDate(d, "short");
+// Card thumbnail = the post's diagram (scripts/render-images.mjs writes diagram-thumb.png). Not the cover:
+// the cover repeats the title that sits right next to it.
+const thumb = (id) => (existsSync(`public/images/${id}/diagram-thumb.png`) ? `/images/${id}/diagram-thumb.png` : null);
 const jsonld = [{
   "@context": "https://schema.org",
   "@type": "Blog",
@@ -17,9 +21,9 @@ const jsonld = [{
   <p class="section-subtitle">How we build and run cloud-native platforms and AI infrastructure for US teams. Real numbers, real configs, anonymized clients.</p>
   <div class="post-list">
     {posts.map((p, i) => (
-      <a class:list={["card glass", { "has-cover": p.data.image }]} href={`/${p.id}`}>
-        {p.data.image && (
-          <img class="card-cover skeleton" src={p.data.image} alt="" width="1200" height="627"
+      <a class:list={["card glass", { "has-thumb": thumb(p.id) }]} href={`/${p.id}`}>
+        {thumb(p.id) && (
+          <img class="card-thumb skeleton" src={thumb(p.id)} alt="" width="840" height="420"
             loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} decoding="async" />
         )}
         <div>
