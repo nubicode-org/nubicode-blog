@@ -4,10 +4,15 @@ const {
   title,
   description,
   canonical = Astro.url.href,
-  image = "https://www.nubicode.com/logos/og-image.png",
+  image = "https://blog.nubicode.com/images/og-blog.png", // scripts/render-images.mjs → public/images/og-blog.png
   wide = false, // index grid gets a wider column than the 800px reading measure
-  imageAlt,
-  imageSize,
+  imageAlt = "NubiCode Blog: Nearshore Platform Notes. Real numbers, real configs, anonymized clients.",
+  imageSize = [1200, 627],
+  noindex = false,
+  author = "NubiCode",
+  keywords = [],
+  article, // { published, modified, section, tags } → article:* tags for LinkedIn/Facebook/Slack unfurls
+  labels = [], // [{ label, data }] → twitter:label/data pairs, shown by Slack and others under the preview
   type = "website",
   jsonld = [],
 } = Astro.props;
@@ -41,23 +46,34 @@ const org = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
+    {!noindex && <meta name="googlebot" content="index, follow" />}
+    <meta name="author" content={author} />
+    {keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="NubiCode Blog" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={image} />
     {image.endsWith(".png") && <meta property="og:image:type" content="image/png" />}
     {imageSize && <meta property="og:image:width" content={String(imageSize[0])} />}
     {imageSize && <meta property="og:image:height" content={String(imageSize[1])} />}
     {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    {article && <meta property="article:published_time" content={article.published} />}
+    {article && <meta property="article:modified_time" content={article.modified} />}
+    {article && <meta property="article:author" content={article.authorUrl} />}
+    {article?.section && <meta property="article:section" content={article.section} />}
+    {article?.tags?.map((t) => <meta property="article:tag" content={t} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@nubicode" />
+    <meta name="twitter:url" content={canonical} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
     {imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
+    {labels.slice(0, 2).map((l, i) => [<meta name={`twitter:label${i + 1}`} content={l.label} />, <meta name={`twitter:data${i + 1}`} content={l.data} />])}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -66,6 +82,8 @@ const org = {
     <link rel="apple-touch-icon" sizes="180x180" href="/logos/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title="NubiCode Blog" href="/rss.xml" />
     <meta name="theme-color" content="#4768F2" />
+    <meta name="msapplication-TileColor" content="#4768F2" />
+    <link rel="manifest" href="/site.webmanifest" />
     <script type="application/ld+json" set:html={JSON.stringify(org)} />
     {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
     <script is:inline>document.documentElement.classList.add("js")</script>

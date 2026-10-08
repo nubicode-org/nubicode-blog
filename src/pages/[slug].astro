@@ -15,16 +15,28 @@ const share = {
   linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
   x: `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.data.title)}`,
 };
-const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : "https://www.nubicode.com/logos/og-image.png";
+const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : undefined; // undefined → Base's blog share image
+const published = post.data.pubDate.toISOString();
+const modified = (post.data.updatedDate ?? post.data.pubDate).toISOString();
+const words = post.body.split(/\s+/).filter(Boolean).length;
+
+// FAQ section ("## FAQ" with **Question?** + answer paragraphs) → FAQPage structured data for search and answer engines.
+const plain = (md) => md.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[`*_]/g, "").replace(/\s+/g, " ").trim();
+const faqBlock = post.body.match(/^## FAQ\s*$([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1] ?? "";
+const faq = [...faqBlock.matchAll(/^\*\*(.+?\?)\*\*\s*\n([\s\S]+?)(?=\n\s*\n|$)/gm)].map(([, q, a]) => ({ q: plain(q), a: plain(a) }));
 const jsonld = [
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
     headline: post.data.title,
     description: post.data.description,
-    image,
-    datePublished: post.data.pubDate.toISOString(),
-    dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+    image: image ? { "@type": "ImageObject", url: image, width: 1200, height: 627 } : undefined,
+    datePublished: published,
+    dateModified: modified,
+    wordCount: words,
+    timeRequired: `PT${minutes}M`,
+    articleSection: post.data.tags[0],
+    isPartOf: { "@type": "Blog", name: "NubiCode Blog", url: "https://blog.nubicode.com/" },
     author: { "@type": "Person", name: post.data.author, url: post.data.authorUrl, worksFor: { "@id": "https://www.nubicode.com/#organization" } },
     publisher: { "@id": "https://www.nubicode.com/#organization" },
     mainEntityOfPage: url,
@@ -40,9 +52,17 @@ const jsonld = [
       { "@type": "ListItem", position: 3, name: post.data.title, item: url },
     ],
   },
+  ...(faq.length ? [{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  }] : []),
 ];
 ---
-<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageAlt={post.data.imageAlt} imageSize={post.data.image ? [1200, 627] : undefined} type="article" jsonld={jsonld}>
+<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageAlt={post.data.imageAlt ?? (image ? post.data.title : undefined)} type="article" jsonld={jsonld}
+  author={post.data.author} keywords={post.data.tags}
+  article={{ published, modified, authorUrl: post.data.authorUrl, section: post.data.tags[0], tags: post.data.tags }}
+  labels={[{ label: "Written by", data: post.data.author }, { label: "Reading time", data: `${minutes} min read` }]}>
   <div class="progress" aria-hidden="true"></div>
   <article>
     <h1>{post.data.title}</h1>

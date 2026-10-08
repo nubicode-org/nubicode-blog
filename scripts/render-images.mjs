@@ -101,7 +101,7 @@ function diagramPage(W, H, eyebrow, title, body) {
   return `<!doctype html><html><head>${head}</head><body>${svg}</body></html>`;
 }
 
-function coverPage({ label, title, accent, sub }) {
+function coverPage({ label, title, accent, sub, chips = [] }) {
   return `<!doctype html><html><head>${head}<style>
   body{width:1200px;height:627px;position:relative;
     background:radial-gradient(700px 480px at 8% 0%,rgba(71,104,242,.20),transparent 62%),
@@ -116,10 +116,12 @@ function coverPage({ label, title, accent, sub }) {
   h1{margin-top:28px;font-size:${title.length > 60 ? 60 : 66}px;line-height:1.1;font-weight:900;letter-spacing:-.02em;color:${T.ink};max-width:1000px}
   .accent{margin-top:28px;font-size:32px;font-weight:800;letter-spacing:-.02em;color:${T.accent};display:flex;align-items:center;gap:16px}
   .accent::before{content:"";width:48px;height:5px;border-radius:5px;background:linear-gradient(135deg,${T.accent},${T.accent2})}
+  .chips{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px;max-width:1000px}
+  .chips span{font-size:19px;font-weight:600;color:${T.ink2};background:rgba(255,255,255,.7);border:1px solid ${T.line};border-radius:50px;padding:9px 18px}
   .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end}
   .foot img{height:44px;display:block}.foot span{font-size:17px;font-weight:600;color:${T.ink2}}
   </style></head><body><div class="panel">
-  <div class="label">${esc(label)}</div><h1>${esc(title)}</h1><div class="accent">${esc(accent)}</div>
+  <div class="label">${esc(label)}</div><h1>${esc(title)}</h1><div class="accent">${esc(accent)}</div>${chips.length ? `<div class="chips">${chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
   <div class="foot"><img src="${LOGO}" alt=""><span>${esc(sub)}</span></div></div></body></html>`;
 }
 
@@ -421,12 +423,18 @@ async function thumb(slug, W, H, body) {
 }
 
 export { posts };
-// Usage: node scripts/render-images.mjs [--thumbs-only] [slug ...]
+// Share image for the blog itself (homepage, 404, any page without a post cover).
+const SITE_COVER = { label: "Engineering blog", title: "Nearshore Platform Notes", accent: "Real numbers, real configs, anonymized clients.", sub: "blog.nubicode.com",
+  chips: ["Kubernetes", "GitOps", "AI agents", "MCP", "LLM inference", "Observability", "FinOps", "Cloud migrations"] };
+
+// Usage: node scripts/render-images.mjs [--thumbs-only | --site-only] [slug ...]
 const args = process.argv.slice(2);
 const thumbsOnly = args.includes("--thumbs-only");
+const siteOnly = args.includes("--site-only");
 const only = args.filter((a) => !a.startsWith("--"));
 if (import.meta.url === `file://${process.argv[1]}`) {
-  for (const [slug, p] of Object.entries(posts)) {
+  if (siteOnly || (!thumbsOnly && !only.length)) shot(coverPage(SITE_COVER), "public/images/og-blog.png", 1200, 627, 1);
+  for (const [slug, p] of Object.entries(siteOnly ? {} : posts)) {
     if (only.length && !only.includes(slug)) continue;
     mkdirSync(join(root, "public/images", slug), { recursive: true });
     const [W, H, eyebrow, title, body] = p.diagram;
