@@ -37,7 +37,7 @@ const jsonld = [
     timeRequired: `PT${minutes}M`,
     articleSection: post.data.tags[0],
     isPartOf: { "@type": "Blog", name: "NubiCode Blog", url: "https://blog.nubicode.com/" },
-    author: { "@type": "Person", name: post.data.author, url: post.data.authorUrl, worksFor: { "@id": "https://www.nubicode.com/#organization" } },
+    author: { "@id": "https://www.nubicode.com/#organization" },
     publisher: { "@id": "https://www.nubicode.com/#organization" },
     mainEntityOfPage: url,
     keywords: post.data.tags.join(", "),
@@ -60,14 +60,14 @@ const jsonld = [
 ];
 ---
 <Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageAlt={post.data.imageAlt ?? (image ? post.data.title : undefined)} type="article" jsonld={jsonld}
-  author={post.data.author} keywords={post.data.tags}
-  article={{ published, modified, authorUrl: post.data.authorUrl, section: post.data.tags[0], tags: post.data.tags }}
-  labels={[{ label: "Written by", data: post.data.author }, { label: "Reading time", data: `${minutes} min read` }]}>
+  keywords={post.data.tags}
+  article={{ published, modified, section: post.data.tags[0], tags: post.data.tags }}
+  labels={[{ label: "Published", data: fmt(post.data.pubDate) }, { label: "Reading time", data: `${minutes} min read` }]}>
   <div class="progress" aria-hidden="true"></div>
   <article>
     <h1>{post.data.title}</h1>
     <p class="meta">
-      <a href={post.data.authorUrl} rel="author" data-astro-prefetch="false">{post.data.author}</a> · <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>{post.data.updatedDate && ` · updated ${fmt(post.data.updatedDate)}`} · {minutes} min read
+      <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{fmt(post.data.pubDate)}</time>{post.data.updatedDate && ` · updated ${fmt(post.data.updatedDate)}`} · {minutes} min read
     </p>
     <div class="tags">{post.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
     <aside class="tldr glass" aria-label="Summary"><span class="tldr-label">TL;DR</span><p>{post.data.tldr}</p></aside>

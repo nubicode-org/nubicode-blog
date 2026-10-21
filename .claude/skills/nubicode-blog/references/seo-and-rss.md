@@ -6,7 +6,7 @@
 
 **Posts** (`src/pages/[slug].astro`):
 - `og:image` = the post cover (1200×627) + alt
-- `article:published_time/modified_time/author/section/tag`
+- `article:published_time/modified_time/section/tag` (no `article:author`: posts are credited to NubiCode, the Organization `@id`, not a person)
 - `twitter:label1/data1` = Written by, `label2/data2` = Reading time (Slack/X show them)
 - JSON-LD: TechArticle (wordCount, timeRequired, ImageObject, isPartOf Blog), BreadcrumbList, **FAQPage** auto-built from a `## FAQ` section (`**Question?**` + answer)
 
