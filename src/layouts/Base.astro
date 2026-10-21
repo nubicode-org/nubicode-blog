@@ -63,7 +63,6 @@ const org = {
     {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
     {article && <meta property="article:published_time" content={article.published} />}
     {article && <meta property="article:modified_time" content={article.modified} />}
-    {article && <meta property="article:author" content={article.authorUrl} />}
     {article?.section && <meta property="article:section" content={article.section} />}
     {article?.tags?.map((t) => <meta property="article:tag" content={t} />)}
     <meta name="twitter:card" content="summary_large_image" />

@@ -27,7 +27,7 @@ tldr: "2–4 sentences. Rendered in the TL;DR box and in llms-full.txt."
 ---
 ```
 
-`image`/`imageAlt` are added by the render step (see `images.md`). `author`/`authorUrl` default to Francisco Herrera.
+`image`/`imageAlt` are added by the render step (see `images.md`). Posts carry no personal author: the byline, JSON-LD and RSS credit NubiCode (the owner's decision, Oct 2026). Don't add `author` fields or name an individual as the writer.
 
 ## Structure (brand-voice blog skeleton)
 

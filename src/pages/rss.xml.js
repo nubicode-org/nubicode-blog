@@ -28,7 +28,6 @@ export async function GET(context) {
         pubDate: p.data.pubDate,
         link: `/${p.id}`,
         categories: p.data.tags,
-        author: p.data.author,
         // Full post (with diagrams as absolute PNG URLs) for readers that render content:encoded.
         content: p.rendered?.html
           ? absolutize(`${cover ? `<p><img src="${cover}" alt="${alt}" width="1200" height="627" /></p>` : ""}<p><strong>TL;DR</strong> ${p.data.tldr}</p>${p.rendered.html}`, site)
