@@ -1,7 +1,7 @@
 ---
 title: "AI SRE agents on Kubernetes: read-only access, no Secrets, no exec"
 description: "Give an AI SRE agent the cluster context it needs without kubectl: a view-bound ServiceAccount, a read-only MCP server, the MCP gateway and GitOps for writes."
-pubDate: 2026-11-04
+pubDate: 2026-10-28
 tags: [ai-agents, kubernetes, mcp, security, gitops]
 proof: [PP-08, PP-06, PP-07, PP-12, PP-09, PP-17]
 image: /images/ai-sre-agents-read-only-kubernetes/cover.png
