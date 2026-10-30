@@ -18,7 +18,7 @@ Topic backlog and social schedule: `../nubicode-marketing/calendar/schedule.md` 
 ---
 title: "≤ 70 chars"
 description: "≤ 160 chars — also the RSS description and meta description"
-pubDate: 2026-10-07            # a Wednesday, next slot after the newest post
+pubDate: 2026-10-07            # never later than the day it ships (UTC); a Wednesday when that is today or earlier
 tags: [kubernetes, mcp]        # lowercase, hyphenated; reuse existing tags so the index filter groups posts
 proof: [PP-06, PP-08]          # proof-point IDs the post relies on
 image: /images/<slug>/cover.png
