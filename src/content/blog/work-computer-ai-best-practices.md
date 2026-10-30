@@ -1,7 +1,7 @@
 ---
 title: "Work computers and AI tools: 8 best practices for engineering teams"
 description: "A practical baseline for AI at work: managed laptops, SSO, company AI plans, data classes, coding-agent guardrails, secret scanning and human review."
-pubDate: 2026-11-04
+pubDate: 2026-10-30
 tags: [security, ai-agents, claude, mcp]
 proof: [PP-12, PP-08, PP-09, PP-17]
 image: /images/work-computer-ai-best-practices/cover.png
