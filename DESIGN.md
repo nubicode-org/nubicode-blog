@@ -71,7 +71,7 @@ No dark theme. The brand is light-only; do not invent a dark palette.
 ## Imagery & social assets
 
 - Photography: real team, real office (NubiWork, Surf City), real screens with no client data. No stock, no AI-generated images.
-- Cards / carousels / OG images: light glass panel on `--bg`, headline in Inter 800–900 `--ink`, one accent line or number in `--accent`, logo bottom-left, ≥ 64px margins. Sizes: OG 1200×630, LinkedIn 1200×627, IG 1080×1350, banner 1584×396.
+- Cards / carousels / OG images: light glass panel on `--bg`, headline in Inter 800–900 `--ink`, one accent line or number in `--accent`, logo bottom-left, ≥ 64px margins. Sizes: OG 1200×630, LinkedIn 1200×627, IG 1080×1350, IG Story 1080×1920 (keep text out of the top 250px and bottom 340px), banner 1584×396.
 - Code in visuals: monospace on `--ink` block, radius 16px.
 
 ## Voice on the page

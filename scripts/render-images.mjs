@@ -125,6 +125,36 @@ function coverPage({ label, title, accent, sub, chips = [] }) {
   <div class="foot"><img src="${LOGO}" alt=""><span>${esc(sub)}</span></div></div></body></html>`;
 }
 
+// Instagram Story (1080×1920): cover text + the post's diagram body on one glass panel.
+// Instagram draws its profile bar over the top ~250px and the reply bar over the bottom ~340px,
+// so the panel bleeds into those bands but everything that must be read sits between them.
+// The diagram is the same vector body as the index thumbnail (no title band, no footer), so it stays sharp.
+function storyPage({ label, title, accent }, [W, H, , , body]) {
+  const vb = `${-THUMB.pad} ${THUMB.top - THUMB.pad} ${W + THUMB.pad * 2} ${H - THUMB.top - THUMB.bottom + THUMB.pad * 2}`;
+  return `<!doctype html><html><head>${head}<style>
+  body{width:1080px;height:1920px;position:relative;
+    background:radial-gradient(900px 760px at 0% 0%,rgba(71,104,242,.22),transparent 62%),
+      radial-gradient(900px 760px at 100% 100%,rgba(107,142,255,.22),transparent 60%),
+      radial-gradient(520px 420px at 92% 18%,rgba(123,92,245,.10),transparent 60%),${T.bg}}
+  .panel{position:absolute;left:56px;right:56px;top:150px;bottom:150px;border-radius:24px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.5);
+    box-shadow:0 8px 32px rgba(71,104,242,.08),0 2px 8px rgba(0,0,0,.04),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(255,255,255,.1);
+    padding:130px 56px 190px;display:flex;flex-direction:column;overflow:hidden}
+  .panel::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,transparent 50%,rgba(255,255,255,.1) 100%)}
+  .panel>*{position:relative;z-index:1}
+  .label{align-self:flex-start;margin-left:8px;font-size:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:${T.accent};background:${T.accentLight};border-radius:50px;padding:10px 26px}
+  h1{margin:36px 8px 0;font-size:${title.length > 60 ? 70 : 78}px;line-height:1.1;font-weight:900;letter-spacing:-.02em;color:${T.ink}}
+  .accent{margin:32px 8px 0;font-size:38px;line-height:1.25;font-weight:800;letter-spacing:-.02em;color:${T.accent};display:flex;align-items:flex-start;gap:18px}
+  .accent::before{content:"";flex:none;width:56px;height:6px;margin-top:21px;border-radius:6px;background:linear-gradient(135deg,${T.accent},${T.accent2})}
+  .diagram{margin:auto 0;padding:8px 0;border-radius:20px;background:${T.bg};border:1px solid ${T.line};box-shadow:0 8px 32px rgba(71,104,242,.10)}
+  .diagram svg{display:block;width:100%;height:auto}
+  .foot{margin:0 8px;display:flex;justify-content:space-between;align-items:center}
+  .foot img{height:52px;display:block}.foot span{font-size:26px;font-weight:700;color:${T.ink2}}
+  </style></head><body><div class="panel">
+  <div class="label">${esc(label)}</div><h1>${esc(title)}</h1><div class="accent">${esc(accent)}</div>
+  <div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${defs()}${body}</svg></div>
+  <div class="foot"><img src="${LOGO}" alt=""><span>Read it on blog.nubicode.com</span></div></div></body></html>`;
+}
+
 // ---------- per-post content ----------
 const posts = {
   "work-computer-ai-best-practices": {
@@ -573,21 +603,23 @@ export { posts };
 const SITE_COVER = { label: "Engineering blog", title: "Nearshore Platform Notes", accent: "Real numbers, real configs, anonymized clients.", sub: "blog.nubicode.com",
   chips: ["Kubernetes", "GitOps", "AI agents", "MCP", "LLM inference", "Observability", "FinOps", "Cloud migrations"] };
 
-// Usage: node scripts/render-images.mjs [--thumbs-only | --site-only] [slug ...]
+// Usage: node scripts/render-images.mjs [--thumbs-only | --stories-only | --site-only] [slug ...]
 const args = process.argv.slice(2);
 const thumbsOnly = args.includes("--thumbs-only");
+const storiesOnly = args.includes("--stories-only");
 const siteOnly = args.includes("--site-only");
 const only = args.filter((a) => !a.startsWith("--"));
 if (import.meta.url === `file://${process.argv[1]}`) {
-  if (siteOnly || (!thumbsOnly && !only.length)) shot(coverPage(SITE_COVER), "public/images/og-blog.png", 1200, 627, 1);
+  if (siteOnly || (!thumbsOnly && !storiesOnly && !only.length)) shot(coverPage(SITE_COVER), "public/images/og-blog.png", 1200, 627, 1);
   for (const [slug, p] of Object.entries(siteOnly ? {} : posts)) {
     if (only.length && !only.includes(slug)) continue;
     mkdirSync(join(root, "public/images", slug), { recursive: true });
     const [W, H, eyebrow, title, body] = p.diagram;
-    if (!thumbsOnly) {
+    if (!thumbsOnly && !storiesOnly) {
       shot(coverPage(p.cover), `public/images/${slug}/cover.png`, 1200, 627, 1);
       shot(diagramPage(W, H, eyebrow, title, body), `public/images/${slug}/diagram.png`, W, H, 2);
     }
-    await thumb(slug, W, H, body);
+    if (!thumbsOnly) shot(storyPage(p.cover, p.diagram), `public/images/${slug}/story.png`, 1080, 1920, 1);
+    if (!storiesOnly) await thumb(slug, W, H, body);
   }
 }
