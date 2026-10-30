@@ -1,5 +1,7 @@
 ---
 import { render } from "astro:content";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import Base from "../layouts/Base.astro";
 import { published, readingMinutes, formatDate } from "../lib/posts.js";
 export async function getStaticPaths() {
@@ -16,6 +18,8 @@ const share = {
   x: `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.data.title)}`,
 };
 const image = post.data.image ? `https://blog.nubicode.com${post.data.image}` : undefined; // undefined → Base's blog share image
+// 9:16 Instagram Story image from scripts/render-images.mjs; the share option only appears when it exists.
+const story = existsSync(join(process.cwd(), "public/images", post.id, "story.png")) ? `/images/${post.id}/story.png` : undefined;
 const published = post.data.pubDate.toISOString();
 const modified = (post.data.updatedDate ?? post.data.pubDate).toISOString();
 const words = post.body.split(/\s+/).filter(Boolean).length;
@@ -76,6 +80,7 @@ const jsonld = [
       <span class="share-label">Share</span>
       <a class="chip-btn" href={share.linkedin} target="_blank" rel="noopener" data-tooltip="Share on LinkedIn" aria-label="Share on LinkedIn">LinkedIn</a>
       <a class="chip-btn" href={share.x} target="_blank" rel="noopener" data-tooltip="Post on X" aria-label="Post on X">X</a>
+      {story && <button class="chip-btn" type="button" data-story-open aria-haspopup="dialog" data-tooltip="Share to your Instagram Story" aria-label="Share to your Instagram Story">Instagram Story</button>}
       <button class="chip-btn" type="button" data-copy-link data-tooltip="Copy link" aria-label="Copy link to this post">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>Copy link
       </button>
@@ -91,6 +96,28 @@ const jsonld = [
       </nav>
     )}
   </article>
+  {story && (
+    <dialog class="story-dialog" data-story-dialog data-src={story} data-name={`nubicode-${post.id}-story.png`} data-url={url} aria-labelledby="story-title">
+      <button class="story-close" type="button" data-story-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <img class="story-preview" src={story} alt={`Instagram Story image: ${post.data.title}`} width="1080" height="1920" loading="lazy" decoding="async" />
+      <div class="story-body">
+        <h2 id="story-title">Share to your Instagram Story</h2>
+        <ol class="story-steps">
+          <li>Share or download this 9:16 image.</li>
+          <li>Add it to your story in Instagram.</li>
+          <li>Add a <strong>Link</strong> sticker and paste the post link. We copy it when you share or download.</li>
+        </ol>
+        <div class="story-actions">
+          <button class="btn btn-glass" type="button" data-story-share hidden>Share image</button>
+          <a class="btn btn-glass" href={story} download={`nubicode-${post.id}-story.png`} data-story-download>Download image</a>
+          <button class="btn btn-glass" type="button" data-story-copy>Copy link</button>
+        </div>
+        <p class="story-status" role="status" aria-live="polite"></p>
+      </div>
+    </dialog>
+  )}
   <script>
     const COPY = '<svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
     const DONE = '<svg class="icon-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -112,7 +139,7 @@ const jsonld = [
     function legacyCopy(text: string) {
       const ta = Object.assign(document.createElement("textarea"), { value: text, readOnly: true });
       ta.style.cssText = "position:fixed;opacity:0;pointer-events:none";
-      document.body.append(ta);
+      (document.querySelector("dialog[open]") ?? document.body).append(ta); // the page behind a modal dialog is inert
       ta.select();
       const ok = document.execCommand("copy");
       ta.remove();
@@ -162,5 +189,60 @@ const jsonld = [
 
     document.querySelector<HTMLButtonElement>("[data-copy-link]")?.addEventListener("click", (e) =>
       copy(location.href.split("#")[0], e.currentTarget as HTMLElement, "Link copied"));
+
+    // Instagram Story: Instagram has no web share URL, so the dialog shows the 9:16 image and offers the
+    // system share sheet (Instagram Stories is a target on iOS and Android), a download, and the post link
+    // for a Link sticker. The image is fetched when the dialog opens, so the share click can call
+    // navigator.share right away; Safari rejects it if the click has to wait for a download first.
+    const dialog = document.querySelector<HTMLDialogElement>("[data-story-dialog]");
+    if (dialog) {
+      const { src = "", name = "story.png", url = location.href.split("#")[0] } = dialog.dataset;
+      const status = dialog.querySelector<HTMLElement>(".story-status")!;
+      const shareBtn = dialog.querySelector<HTMLButtonElement>("[data-story-share]")!;
+      let file: File | undefined;
+      const say = (text: string) => { status.textContent = text; };
+      // Clipboard writes can fail without a user gesture or in embeds; the link is still on the Copy link button.
+      async function copyLink() {
+        try { await navigator.clipboard.writeText(url); return true; }
+        catch { return legacyCopy(url); }
+      }
+
+      document.querySelector("[data-story-open]")?.addEventListener("click", () => {
+        say("");
+        dialog.showModal();
+        if (file) return;
+        fetch(src)
+          .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+          .then((blob) => {
+            file = new File([blob], name, { type: "image/png" });
+            shareBtn.hidden = !navigator.canShare?.({ files: [file] });
+          })
+          .catch(() => { /* Download image still works */ });
+      });
+
+      shareBtn.addEventListener("click", async () => {
+        if (!file) return;
+        const copied = copyLink(); // start inside the click, before share takes the user activation
+        try {
+          await navigator.share({ files: [file] });
+          say((await copied) ? "Link copied. Paste it into a Link sticker." : "Shared. Use Copy link for the Link sticker.");
+        } catch (err) {
+          if ((err as DOMException).name !== "AbortError") say("Sharing didn't work here. Download the image instead.");
+        }
+      });
+
+      dialog.querySelector("[data-story-download]")?.addEventListener("click", async () => {
+        say((await copyLink()) ? "Image downloaded and link copied." : "Image downloaded. Use Copy link for the Link sticker.");
+      });
+      dialog.querySelector("[data-story-copy]")?.addEventListener("click", async () => {
+        say((await copyLink()) ? "Link copied. Paste it into a Link sticker." : "Press ⌘C / Ctrl+C to copy: " + url);
+      });
+
+      dialog.querySelector("[data-story-close]")?.addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (e) => { // backdrop click; the dialog's own padding also targets it, so check the box
+        const r = dialog.getBoundingClientRect();
+        if (e.target === dialog && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) dialog.close();
+      });
+    }
   </script>
 </Base>
