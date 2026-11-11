@@ -4,7 +4,7 @@ description: "Send the same traces, metrics and logs to Azure Monitor and Google
 pubDate: 2026-09-23
 tags: [opentelemetry, observability, kubernetes, azure, gcp]
 proof: [PP-07]
-image: /images/opentelemetry-collector-azure-monitor-google-cloud/cover.png
+image: /images/opentelemetry-collector-azure-monitor-google-cloud/cover-square.png
 imageAlt: "One OpenTelemetry Collector, two clouds: Azure Monitor + Google Cloud — Instrument once. Export to both."
 tldr: "Instrument once with OTLP, run the Collector as a DaemonSet (node agent) plus a Deployment (gateway), and fan out each pipeline to two exporters: azuremonitor and googlecloud. Give each exporter its own queue so one slow backend can't stall the other, and do filtering in the gateway so both clouds bill you for the same, smaller stream."
 ---

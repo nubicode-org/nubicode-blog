@@ -4,7 +4,7 @@ description: "How we moved a recruitment platform’s ~40-instance .NET fleet an
 pubDate: 2026-09-02
 tags: [aws, migration, packer, dms, direct-connect, eks]
 proof: [PP-04, PP-02]
-image: /images/zero-downtime-datacenter-to-aws-migration/cover.png
+image: /images/zero-downtime-datacenter-to-aws-migration/cover-square.png
 imageAlt: "Zero-downtime datacenter to AWS: golden AMIs, DMS, Direct Connect — ~40 instances moved · 0 downtime"
 tldr: "Golden AMIs made the fleet disposable, Direct Connect + DMS kept the databases in sync, and a weighted DNS cutover meant the last user never noticed. Decompose the monolith after the move, not during."
 ---

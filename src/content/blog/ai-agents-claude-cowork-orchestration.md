@@ -4,7 +4,7 @@ description: "When to use Claude chat, Cowork, Claude Code or the Agent SDK, and
 pubDate: 2026-10-07
 tags: [ai-agents, claude, cowork, orchestration, mcp]
 proof: [PP-06, PP-08, PP-15, PP-16]
-image: /images/ai-agents-claude-cowork-orchestration/cover.png
+image: /images/ai-agents-claude-cowork-orchestration/cover-square.png
 imageAlt: "AI agents with Claude: chat, Cowork, Claude Code and orchestration — Plan. Delegate. Verify. In production."
 tldr: "Use chat for answers, Cowork to hand off multi-step knowledge work on your files, Claude Code for software work, and the Agent SDK when agents run inside your own systems. An orchestrator is one agent that plans, delegates to narrowly-scoped workers, and checks their output. In production it needs the same things as any platform service: one gateway for tools, least privilege per worker, versioned deploys, and an audit line per tool call."
 ---

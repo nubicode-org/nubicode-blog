@@ -3,7 +3,7 @@ title: "Stop deploying :latest: immutable image tags with Git SHAs"
 description: "Tag images with the Git commit SHA, make the registry refuse overwrites, promote one image from dev to prod, and roll back with git revert."
 pubDate: 2026-09-16
 tags: [containers, ecr, kubernetes, github-actions, gitops]
-image: /images/immutable-image-tags-git-sha/cover.png
+image: /images/immutable-image-tags-git-sha/cover-square.png
 imageAlt: "Stop deploying :latest — immutable image tags with Git SHAs — 1 commit = 1 tag, forever"
 tldr: "Tag every image with the Git SHA that built it, turn on tag immutability in the registry, build once and promote the same image through every environment, and roll back by reverting a commit. You get a one-line answer to 'what's running in prod?' and rollbacks that can't pick up surprise changes."
 ---

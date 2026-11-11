@@ -4,7 +4,7 @@ description: "Give an AI SRE agent the cluster context it needs without kubectl:
 pubDate: 2026-10-28
 tags: [ai-agents, kubernetes, mcp, security, gitops]
 proof: [PP-08, PP-06, PP-07, PP-12, PP-09, PP-17]
-image: /images/ai-sre-agents-read-only-kubernetes/cover.png
+image: /images/ai-sre-agents-read-only-kubernetes/cover-square.png
 imageAlt: "AI SRE agents on Kubernetes: read-only access, no Secrets, no exec — Read the cluster. Change it through Git."
 tldr: "An AI SRE agent with a shell and kubectl will create pods, exec into containers and read Secrets while it investigates. Give it a read-only MCP server bound to the built-in view ClusterRole, reached only through an MCP gateway, with every call audited. Diagnosis stays fast because the agent gets cluster context through tools, and every fix becomes a pull request that ArgoCD applies."
 ---

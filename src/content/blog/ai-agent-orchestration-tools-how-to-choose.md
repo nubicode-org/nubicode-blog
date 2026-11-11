@@ -4,7 +4,7 @@ description: "LangGraph, CrewAI, Microsoft Agent Framework, OpenAI and Claude SD
 pubDate: 2026-11-04
 tags: [ai-agents, orchestration, mcp, ai-infrastructure, claude]
 proof: [PP-06, PP-07, PP-08, PP-15, PP-16, PP-09, PP-10, PP-17]
-image: /images/ai-agent-orchestration-tools-how-to-choose/cover.png
+image: /images/ai-agent-orchestration-tools-how-to-choose/cover-square.png
 imageAlt: "AI agent orchestration tools in 2026: how to choose the right one — The framework is the smallest decision."
 tldr: "Pick the platform first and the framework second. Choose the framework by where it must run, who maintains it, how long a run lasts, how visible the control flow must be, and how many model vendors you need: Strands and AgentCore for AWS shops, Microsoft Agent Framework for .NET and Azure, Google ADK for Google Cloud, LangGraph (plus Temporal for long runs) for multi-cloud Kubernetes, Mastra or the OpenAI and Claude SDKs for TypeScript teams. Keep tools behind an MCP gateway, models behind an LLM gateway and traces in OpenTelemetry, so swapping frameworks later is one service rewrite, not a platform rebuild."
 ---
