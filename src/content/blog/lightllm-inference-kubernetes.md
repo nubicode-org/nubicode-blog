@@ -4,7 +4,7 @@ description: "Serving our own models behind the MCP gateway: GPU node pools, con
 pubDate: 2026-09-30
 tags: [kubernetes, llm, inference, gpu, lightllm, ai-infrastructure]
 proof: [PP-16, PP-08]
-image: /images/lightllm-inference-kubernetes/cover-square.png
+image: /images/lightllm-inference-kubernetes/cover.png
 imageAlt: "Self-hosted LLM inference on Kubernetes with LightLLM — Continuous batching. No per-token API bill."
 tldr: "LightLLM gives you continuous batching and a paged KV cache without a vLLM-vs-TGI bake-off: an OpenAI-compatible API behind one Deployment on a tainted GPU node pool. Scale replicas on queue depth with KEDA instead of CPU, pull weights once via an initContainer, and route calls to it the same way agents already reach every other tool — through the MCP gateway."
 ---

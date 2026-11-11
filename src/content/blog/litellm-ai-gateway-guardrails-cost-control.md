@@ -4,7 +4,7 @@ description: "One LiteLLM proxy in front of Claude, Bedrock and self-hosted mode
 pubDate: 2026-10-14
 tags: [ai-infrastructure, llm, litellm, finops, security, kubernetes]
 proof: [PP-18, PP-08, PP-15, PP-16, PP-06, PP-07, PP-09, PP-10, PP-17]
-image: /images/litellm-ai-gateway-guardrails-cost-control/cover-square.png
+image: /images/litellm-ai-gateway-guardrails-cost-control/cover.png
 imageAlt: "LiteLLM as an AI gateway: guardrails, budgets and model routing — One key per app. One budget per team."
 tldr: "Once more than one application calls an LLM, put a gateway in front of every model. A LiteLLM proxy gives each app its own virtual key, each team a budget and rate limit, runs PII and secret guardrails before a prompt leaves your network, and routes one model name across the Claude API, AWS Bedrock and self-hosted inference with fallbacks. Run it like any platform service: Postgres for keys and spend, Redis once there are two replicas, Helm and ArgoCD for config, Prometheus for spend per team."
 ---

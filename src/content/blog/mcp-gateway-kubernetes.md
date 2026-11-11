@@ -3,7 +3,7 @@ title: "Running an MCP gateway on Kubernetes for AI agents"
 description: "One front door for AI agents: MCP servers behind a Kubernetes gateway with auth, per-tool authorization, session routing and a per-call audit log."
 pubDate: 2026-09-09
 tags: [mcp, ai-infrastructure, kubernetes, helm, security]
-image: /images/mcp-gateway-kubernetes/cover-square.png
+image: /images/mcp-gateway-kubernetes/cover.png
 imageAlt: "Running an MCP gateway on Kubernetes for AI agents — One front door. Every tool call authorized + audited."
 tldr: "Don't let agents connect straight to every MCP server. Put one gateway in front: it aggregates the tool catalog, holds the downstream credentials, authorizes every tool call, and writes one audit line per call. On Kubernetes that's a Deployment + Ingress for the gateway, ClusterIP-only MCP servers, and NetworkPolicy so nothing else can reach them."
 ---

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Renders every post's LinkedIn/OG cover (square 1200×1200 + legacy 1200×627) and in-article diagram (PNG, 2x)
+// Renders every post's LinkedIn/OG cover (1200×627) and in-article diagram (PNG, 2x)
 // into public/images/<slug>/. Hand-drawn vector diagrams in DESIGN.md tokens — no generated imagery.
 // PNG, not SVG: LinkedIn, RSS readers and email clients don't render SVG.
 //
@@ -153,34 +153,6 @@ function storyPage({ label, title, accent }, [W, H, , , body]) {
   <div class="label">${esc(label)}</div><h1>${esc(title)}</h1><div class="accent">${esc(accent)}</div>
   <div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${defs()}${body}</svg></div>
   <div class="foot"><img src="${LOGO}" alt=""><span>Read it on blog.nubicode.com</span></div></div></body></html>`;
-}
-
-// Square LinkedIn/OG cover (1200×1200): cover text + the post's diagram body on one glass panel.
-// Same vector body as the thumbnail/story, so it stays sharp and shows more of the post than the 1.91:1 card.
-function squarePage({ label, title, accent, sub }, [W, H, , , body]) {
-  const vb = `${-THUMB.pad} ${THUMB.top - THUMB.pad} ${W + THUMB.pad * 2} ${H - THUMB.top - THUMB.bottom + THUMB.pad * 2}`;
-  return `<!doctype html><html><head>${head}<style>
-  body{width:1200px;height:1200px;position:relative;
-    background:radial-gradient(800px 640px at 6% 0%,rgba(71,104,242,.20),transparent 62%),
-      radial-gradient(760px 620px at 100% 100%,rgba(107,142,255,.20),transparent 60%),
-      radial-gradient(460px 360px at 90% 5%,rgba(123,92,245,.10),transparent 60%),${T.bg}}
-  .panel{position:absolute;inset:40px;border-radius:28px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.5);
-    box-shadow:0 8px 32px rgba(71,104,242,.08),0 2px 8px rgba(0,0,0,.04),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(255,255,255,.1);
-    padding:56px 64px 48px;display:flex;flex-direction:column;overflow:hidden}
-  .panel::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,transparent 50%,rgba(255,255,255,.1) 100%)}
-  .panel>*{position:relative;z-index:1}
-  .label{align-self:flex-start;font-size:18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:${T.accent};background:${T.accentLight};border-radius:50px;padding:8px 22px}
-  h1{margin-top:28px;font-size:${title.length > 60 ? 58 : 64}px;line-height:1.1;font-weight:900;letter-spacing:-.02em;color:${T.ink}}
-  .accent{margin-top:22px;font-size:30px;line-height:1.25;font-weight:800;letter-spacing:-.02em;color:${T.accent};display:flex;align-items:flex-start;gap:16px}
-  .accent::before{content:"";flex:none;width:48px;height:5px;margin-top:17px;border-radius:5px;background:linear-gradient(135deg,${T.accent},${T.accent2})}
-  .diagram{margin:auto 0;padding:8px 0;border-radius:20px;background:${T.bg};border:1px solid ${T.line};box-shadow:0 8px 32px rgba(71,104,242,.10)}
-  .diagram svg{display:block;width:100%;height:auto}
-  .foot{margin-top:auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center}
-  .foot img{height:44px;display:block}.foot span{font-size:20px;font-weight:600;color:${T.ink2}}
-  </style></head><body><div class="panel">
-  <div class="label">${esc(label)}</div><h1>${esc(title)}</h1><div class="accent">${esc(accent)}</div>
-  <div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${defs()}${body}</svg></div>
-  <div class="foot"><img src="${LOGO}" alt=""><span>${esc(sub)}</span></div></div></body></html>`;
 }
 
 // ---------- per-post content ----------
@@ -680,7 +652,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const [W, H, eyebrow, title, body] = p.diagram;
     if (!thumbsOnly && !storiesOnly) {
       shot(coverPage(p.cover), `public/images/${slug}/cover.png`, 1200, 627, 1);
-      shot(squarePage(p.cover, p.diagram), `public/images/${slug}/cover-square.png`, 1200, 1200, 1);
       shot(diagramPage(W, H, eyebrow, title, body), `public/images/${slug}/diagram.png`, W, H, 2);
     }
     if (!thumbsOnly) shot(storyPage(p.cover, p.diagram), `public/images/${slug}/story.png`, 1080, 1920, 1);

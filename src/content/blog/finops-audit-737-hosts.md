@@ -4,7 +4,7 @@ description: "How we inventoried 737 hosts across three clouds, sorted them into
 pubDate: 2026-08-19
 tags: [finops, aws, gcp, azure, kubernetes]
 proof: [PP-01]
-image: /images/finops-audit-737-hosts/cover-square.png
+image: /images/finops-audit-737-hosts/cover.png
 imageAlt: "FinOps audit of 737 hosts: the script, the buckets, the savings — 737 hosts · 3 clouds · 4 buckets"
 tldr: "Inventory by script, bucket by evidence (keep / rightsize / decommission / ask), price the buckets, commit last. The deliverable is a re-runnable job, not a PDF."
 ---

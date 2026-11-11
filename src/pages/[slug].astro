@@ -34,7 +34,7 @@ const jsonld = [
     "@type": "TechArticle",
     headline: post.data.title,
     description: post.data.description,
-    image: image ? { "@type": "ImageObject", url: image, width: 1200, height: 1200 } : undefined,
+    image: image ? { "@type": "ImageObject", url: image, width: 1200, height: 627 } : undefined,
     datePublished: published,
     dateModified: modified,
     wordCount: words,
@@ -63,7 +63,7 @@ const jsonld = [
   }] : []),
 ];
 ---
-<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageSize={image ? [1200, 1200] : undefined} imageAlt={post.data.imageAlt ?? (image ? post.data.title : undefined)} type="article" jsonld={jsonld}
+<Base title={`${post.data.title} — NubiCode Blog`} description={post.data.description} canonical={url} image={image} imageAlt={post.data.imageAlt ?? (image ? post.data.title : undefined)} type="article" jsonld={jsonld}
   keywords={post.data.tags}
   article={{ published, modified, section: post.data.tags[0], tags: post.data.tags }}
   labels={[{ label: "Published", data: fmt(post.data.pubDate) }, { label: "Reading time", data: `${minutes} min read` }]}>
