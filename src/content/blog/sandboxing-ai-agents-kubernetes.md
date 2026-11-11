@@ -4,7 +4,7 @@ description: "A Pod is not a sandbox. How to run agent-generated code on Kuberne
 pubDate: 2026-10-12
 tags: [ai-agents, kubernetes, security, claude, ai-infrastructure]
 proof: [PP-08, PP-06, PP-07, PP-09, PP-17]
-image: /images/sandboxing-ai-agents-kubernetes/cover-square.png
+image: /images/sandboxing-ai-agents-kubernetes/cover.png
 imageAlt: "Sandboxing AI agents on Kubernetes with Agent Sandbox and gVisor — One session. One sandbox. Default deny."
 tldr: "An AI agent that runs code is running code nobody reviewed, so a plain Pod is not enough: it shares the node's kernel, mounts a service account token and can reach the cloud metadata server. Kubernetes Agent Sandbox (kubernetes-sigs, v1.0.6 as of October 8, 2026) adds SandboxTemplate, SandboxWarmPool and SandboxClaim on top of a gVisor RuntimeClass. Run one session per sandbox, deny egress by default, keep credentials in the MCP gateway instead of the sandbox, and ship the whole thing through GitOps."
 ---

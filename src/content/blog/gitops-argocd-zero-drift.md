@@ -4,7 +4,7 @@ description: "ArgoCD on a multi-cloud AI agent platform: app-of-apps, versioned 
 pubDate: 2026-08-26
 tags: [argocd, gitops, kubernetes, helm, github-actions]
 proof: [PP-06, PP-07, PP-08]
-image: /images/gitops-argocd-zero-drift/cover-square.png
+image: /images/gitops-argocd-zero-drift/cover.png
 imageAlt: "GitOps with ArgoCD: zero config drift across multi-cloud Kubernetes — 0 drift incidents in 9 months"
 tldr: "Zero drift for nine months came from four things: kubectl apply was not an option, every chart had a version, ArgoCD self-healed and pruned, and every cluster was bootstrapped the same way. Discipline was not one of them."
 ---
