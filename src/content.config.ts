@@ -9,7 +9,7 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
-    image: z.string().optional(), // 1200×627 PNG under /public — og:image, LinkedIn preview, RSS enclosure
+    image: z.string().optional(), // 1200×1200 PNG under /public — og:image, LinkedIn preview, RSS enclosure
     imageAlt: z.string().optional(),
     draft: z.boolean().default(false),
     proof: z.array(z.string()).default([]),

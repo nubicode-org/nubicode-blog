@@ -4,7 +4,7 @@ description: "A practical baseline for AI at work: managed laptops, SSO, company
 pubDate: 2026-10-30
 tags: [security, ai-agents, claude, mcp]
 proof: [PP-12, PP-08, PP-09, PP-17]
-image: /images/work-computer-ai-best-practices/cover.png
+image: /images/work-computer-ai-best-practices/cover-square.png
 imageAlt: "Work computers and AI tools: 8 best practices for engineering teams — Pick the data class first. Then the tool."
 tldr: "Most AI incidents at work are not model failures. They are a confidential file pasted into a personal chatbot, a key in a prompt, or a coding agent running with every permission on the laptop. The fix is a short baseline: a managed, encrypted computer, one company identity, company AI accounts, a rule for which data goes where, managed settings for coding agents, secret scanning, approved connectors, and a person who reviews every output."
 ---

@@ -30,12 +30,12 @@ export async function GET(context) {
         categories: p.data.tags,
         // Full post (with diagrams as absolute PNG URLs) for readers that render content:encoded.
         content: p.rendered?.html
-          ? absolutize(`${cover ? `<p><img src="${cover}" alt="${alt}" width="1200" height="627" /></p>` : ""}<p><strong>TL;DR</strong> ${p.data.tldr}</p>${p.rendered.html}`, site)
+          ? absolutize(`${cover ? `<p><img src="${cover}" alt="${alt}" width="1200" height="1200" /></p>` : ""}<p><strong>TL;DR</strong> ${p.data.tldr}</p>${p.rendered.html}`, site)
           : undefined,
         // Cover as enclosure + media:content: the image LinkedIn/feed tools pick for the share card.
         ...(cover && {
           enclosure: { url: cover, type: "image/png", length: statSync(`public${p.data.image}`).size },
-          customData: `<media:content url="${cover}" medium="image" type="image/png" width="1200" height="627"><media:description type="plain">${alt}</media:description></media:content>`,
+          customData: `<media:content url="${cover}" medium="image" type="image/png" width="1200" height="1200"><media:description type="plain">${alt}</media:description></media:content>`,
         }),
       };
     }),
