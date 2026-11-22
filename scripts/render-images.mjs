@@ -157,6 +157,30 @@ function storyPage({ label, title, accent }, [W, H, , , body]) {
 
 // ---------- per-post content ----------
 const posts = {
+  "protect-yourself-developer-user-security-risks": {
+    cover: { label: "Security", title: "How to protect yourself from today's security risks, in 9\u00a0steps", accent: "Most attacks start with a stolen login.", sub: "blog.nubicode.com" },
+    diagram: [1200, 720, "Security: four risks, four defenses", "Every risk in the news is countered by limiting trust",
+      [
+        group(60, 140, 330, 400, "Risk in the news"),
+        node(80, 175, 290, 76, "Poisoned packages", ["axios, npm worms"]),
+        node(80, 265, 290, 76, "Prompt injection", ["AI tools follow hidden text"]),
+        node(80, 355, 290, 76, "AI-voiced scams", ["cloned voices, deepfakes"]),
+        node(80, 445, 290, 76, "Stolen credentials", ["tokens, passwords, keys"]),
+        group(430, 140, 710, 400, "Defense"),
+        node(450, 175, 670, 76, "Lockfile, pinned versions, install scripts off", ["no secrets in the build job"], "accent"),
+        node(450, 265, 670, 76, "Sandbox, least privilege, a person reviews the diff", ["deny .env, approved MCP servers only"], "code"),
+        node(450, 355, 670, 76, "Call back on a known number", ["passkeys instead of typed passwords"]),
+        node(450, 445, 670, 76, "Short-lived tokens, password manager, secret scanning", ["rotate first, investigate second"]),
+        arrow([[370, 213], [450, 213]]),
+        arrow([[370, 303], [450, 303]]),
+        arrow([[370, 393], [450, 393]]),
+        arrow([[370, 483], [450, 483]]),
+        text(60, 590, "UNDER ALL OF IT", { size: 11.5, weight: 700, fill: T.accent, ls: 0.08 }),
+        node(60, 604, 1080, 56, "Verify before you trust \u2014 practice it on alfred.nubicode.com", [], "accent"),
+      ].join("")],
+    alt: "Diagram mapping four risks seen in the news to defenses. Poisoned packages are countered by a lockfile, pinned versions, install scripts off and no secrets in the build job. Prompt injection against AI tools is countered by a sandbox, least privilege and a person reviewing the diff. AI-voiced scams are countered by calling back on a known number and using passkeys. Stolen credentials are countered by short-lived tokens, a password manager and secret scanning. All four rest on one habit: verify before you trust, which you can practice on alfred.nubicode.com.",
+    caption: "Four recurring risks, one defense each, and one habit under all of them: verify before you trust.",
+  },
   "ai-agent-orchestration-tools-how-to-choose": {
     cover: { label: "AI agents", title: "AI agent orchestration tools in 2026: how to choose the right one", accent: "The framework is the smallest decision.", sub: "blog.nubicode.com" },
     diagram: [1200, 720, "AI agent orchestration tools, November 2026", "Frameworks change every year; the platform under them should not",
