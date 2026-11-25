@@ -157,6 +157,31 @@ function storyPage({ label, title, accent }, [W, H, , , body]) {
 
 // ---------- per-post content ----------
 const posts = {
+  "bedrock-prompt-caching-faq-chatbot-guardrails": {
+    cover: { label: "Amazon Bedrock", title: "Cut Bedrock chatbot costs: prompt caching, semantic cache,\u00a0guardrails", accent: "Pay for the same answer once.", sub: "blog.nubicode.com" },
+    diagram: [1200, 720, "Bedrock FAQ chatbot: cache the repeats", "Guardrails first, a semantic cache second, then a model with a cached prefix",
+      [
+        node(60, 175, 200, 76, "User question", ["chat widget"]),
+        node(310, 175, 240, 76, "Input guardrail", ["denied topics \u00b7 PII"], "accent"),
+        node(600, 175, 240, 76, "Semantic cache", ["ElastiCache for Valkey"]),
+        node(890, 175, 250, 76, "Answer", ["cache hit: no model call"], "accent"),
+        arrow([[260, 213], [310, 213]]),
+        arrow([[550, 213], [600, 213]]),
+        arrow([[840, 213], [890, 213]], { label: "hit", lx: 865, ly: 168 }),
+        node(600, 320, 240, 76, "Bedrock model", ["static prefix from prompt cache"], "code"),
+        arrow([[720, 251], [720, 320]], { label: "miss", lx: 732, ly: 292 }),
+        node(890, 320, 250, 76, "Output guardrail", ["block or mask \u00b7 then store"], "accent"),
+        arrow([[840, 358], [890, 358]]),
+        arrow([[1015, 320], [1015, 251]]),
+        group(60, 440, 1080, 130, "Token controls for everything that reaches the model"),
+        pill(80, 490, 245, 1, "Short prompt", "every token is read"),
+        pill(345, 490, 245, 2, "Cap output", "maxTokens + a length rule"),
+        pill(610, 490, 245, 3, "Right-size model", "small model for simple FAQs"),
+        pill(875, 490, 245, 4, "Trim history", "last turns or a summary"),
+      ].join("")],
+    alt: "Diagram of a FAQ chatbot request path on Amazon Bedrock. A user question passes an input guardrail that checks denied topics and PII. It then reaches a semantic cache in ElastiCache for Valkey. On a cache hit the stored answer is returned and no model is called. On a miss the request goes to the Bedrock model, where the long static prompt prefix comes from Bedrock prompt caching. The model answer passes an output guardrail that blocks or masks content, and only answers that passed are stored in the cache and returned. Below, four token controls apply to anything that reaches the model: a short prompt, a cap on output tokens, the smallest model that answers well, and trimmed chat history.",
+    caption: "Guardrails first, a semantic cache second, then the model with a cached prefix; only answers that passed the output guardrail are stored.",
+  },
   "protect-yourself-developer-user-security-risks": {
     cover: { label: "Security", title: "How to protect yourself from today's security risks, in 9\u00a0steps", accent: "Most attacks start with a stolen login.", sub: "blog.nubicode.com" },
     diagram: [1200, 720, "Security: four risks, four defenses", "Every risk in the news is countered by limiting trust",
